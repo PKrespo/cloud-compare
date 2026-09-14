@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloud Service Atlas — AWS vs Azure vs GCP vs IBM vs Oracle vs Alibaba vs Huawei</title>
+<meta name="description" content="A searchable reference matrix mapping equivalent managed services across AWS, Microsoft Azure, Google Cloud, IBM Cloud, Oracle Cloud, Alibaba Cloud and Huawei Cloud.">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3f1ed;
+    --surface:#ffffff;
+    --surface-soft:#faf8f5;
+    --ink:#1b1f27;
+    --ink-soft:#4b5563;
+    --line:#dfe2d8;
+    --line-strong:#c5c9c0;
+    --accent:#1f4d73;
+    --accent-ink:#163b5b;
+    --accent-soft:#edf4fb;
+    --shadow:0 18px 45px rgba(26,29,35,0.08);
+    --radius:14px;
+    --aws:#f29900;
+    --azure:#0a6ed8;
+    --google:#2f6fe7;
+    --ibm:#0f62fe;
+    --oracle:#d14d3e;
+    --alibaba:#e96d12;
+    --huawei:#d11b2d;
+    --font-mono:'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font-sans:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  [data-theme="night"]{
+    color-scheme:dark;
+    --paper:#111820;
+    --surface:#1a2530;
+    --surface-soft:#202d38;
+    --ink:#edf3f7;
+    --ink-soft:#aebdca;
+    --line:#32424f;
+    --line-strong:#506372;
+    --accent:#81b8e8;
+    --accent-ink:#b8d9f2;
+    --accent-soft:#20384c;
+    --shadow:0 18px 45px rgba(0,0,0,0.3);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at top left, rgba(31,77,115,0.05), transparent 26%),
+      linear-gradient(90deg, rgba(27,31,39,0.015) 1px, transparent 1px) 0 0/24px 24px,
+      linear-gradient(rgba(27,31,39,0.012) 1px, transparent 1px) 0 0/24px 24px,
+      var(--paper);
+    color:var(--ink);
+    font-family:var(--font-sans);
+    font-size:15px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{ color:var(--accent-ink); }
+
+  :focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:2px;
+  }
+
+  /* ---------- Header ---------- */
+
+  .site-header{
+    position:sticky;
+    top:0;
+    z-index:30;
+    background:rgba(243,241,237,0.9);
+    backdrop-filter:saturate(180%) blur(12px);
+    border-bottom:1px solid rgba(26,29,35,0.08);
+    padding:18px 28px 0;
+    transition:box-shadow .25s ease, padding .25s ease, border-color .25s ease;
+  }
+  .site-header.is-condensed{
+    box-shadow:0 8px 20px -18px rgba(26,29,35,0.38);
+    border-color:rgba(26,29,35,0.1);
+  }
+
+  .header-row{
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:24px;
+    flex-wrap:wrap;
+    max-width:1360px;
+    margin:0 auto;
+  }
+
+  [data-theme="night"] body{
+    background:
+      radial-gradient(circle at top left, rgba(129,184,232,0.09), transparent 26%),
+      linear-gradient(90deg, rgba(237,243,247,0.025) 1px, transparent 1px) 0 0/24px 24px,
+      linear-gradient(rgba(237,243,247,0.02) 1px, transparent 1px) 0 0/24px 24px,
+      var(--paper);
+  }
+  [data-theme="night"] .site-header{ background:rgba(17,24,32,0.92); }
+  [data-theme="night"] #search,
+  [data-theme="night"] .provider-chip,
+  [data-theme="night"] .service-group-select,
+  [data-theme="night"] .service-group-menu,
+  [data-theme="night"] .row{ background:var(--surface); }
+  [data-theme="night"] .cell.label{ background:linear-gradient(180deg, var(--surface), var(--surface-soft)); }
+
+  .theme-toggle{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    min-height:34px;
+    padding:7px 10px;
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    background:var(--surface);
+    color:var(--ink-soft);
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
+    order:2;
+    margin-left:auto;
+  }
+  .theme-toggle:hover{ color:var(--ink); transform:translateY(-1px); }
+  .theme-toggle-icon{ font-size:14px; line-height:1; }
+
+  .mark{ display:flex; align-items:center; gap:12px; }
+  .mark-glyph{
+    font-family:var(--font-mono);
+    font-size:22px;
+    line-height:1;
+    color:var(--accent);
+    border:1px solid rgba(35,77,121,0.2);
+    width:40px; height:40px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:12px;
+    background:linear-gradient(135deg, rgba(35,77,121,0.12), rgba(35,77,121,0.04));
+    flex:none;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.85);
+  }
+  .mark-text{ display:flex; flex-direction:column; }
+  .mark-title{
+    font-family:var(--font-mono);
+    font-weight:600;
+    font-size:19px;
+    letter-spacing:-0.02em;
+  }
+  .mark-sub{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+
+  .search-wrap{
+    position:relative;
+    flex:1 1 320px;
+    max-width:520px;
+    min-width:240px;
+    order:3;
+  }
+  .search-wrap::before{
+    content:"⌕";
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:18px;
+    color:var(--ink-soft);
+    pointer-events:none;
+  }
+  #search{
+    width:100%;
+    font-family:var(--font-sans);
+    font-size:14.5px;
+    padding:12px 16px 12px 38px;
+    border:1px solid rgba(26,29,35,0.12);
+    border-radius:999px;
+    background:rgba(255,255,255,0.9);
+    color:var(--ink);
+    box-shadow:inset 0 1px 2px rgba(26,29,35,0.03);
+    transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  #search::placeholder{ color:#8a919c; }
+  #search:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 4px rgba(35,77,121,0.08);
+    background:var(--surface);
+  }
+
+  .stats-row{
+    max-width:1360px;
+    margin:12px auto 0;
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:var(--ink-soft);
+    padding-bottom:6px;
+  }
+  .stats-row strong{
+    color:var(--ink);
+    font-weight:600;
+  }
+
+  .filter-row{
+    max-width:1360px;
+    margin:12px auto 0;
+    padding-bottom:14px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .service-group-wrap{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding-left:8px;
+  }
+  .service-group-label{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .service-group-select-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .service-group-select-wrap::after{
+    content:"▾";
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--ink-soft);
+    pointer-events:none;
+    font-size:12px;
+  }
+  .service-group-select{
+    border:1px solid rgba(27,31,39,0.15);
+    border-radius:10px;
+    background:rgba(255,255,255,0.82);
+    color:var(--ink);
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    line-height:1.2;
+    min-height:34px;
+    min-width:180px;
+    padding:8px 30px 8px 10px;
+    cursor:pointer;
+    box-shadow:0 1px 0 rgba(255,255,255,0.7);
+    max-width:280px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .service-group-select:focus-visible{
+    outline:3px solid rgba(35,77,121,0.12);
+    border-color:var(--accent);
+  }
+  .service-group-menu{
+    position:absolute;
+    z-index:20;
+    top:calc(100% + 6px);
+    right:0;
+    display:none;
+    width:280px;
+    max-height:300px;
+    overflow:auto;
+    padding:8px;
+    border:1px solid rgba(27,31,39,0.14);
+    border-radius:12px;
+    background:var(--surface);
+    box-shadow:0 14px 30px rgba(27,31,39,0.14);
+  }
+  .service-group-select-wrap.is-open .service-group-menu{ display:block; }
+  .service-group-menu-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:2px 6px 8px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:4px;
+  }
+  .service-group-menu-title{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  .service-group-clear{
+    border:0;
+    padding:2px 0;
+    background:none;
+    color:var(--accent-ink);
+    font-family:var(--font-mono);
+    font-size:11px;
+    text-decoration:underline;
+    cursor:pointer;
+  }
+  .service-group-option{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 6px;
+    border-radius:7px;
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .service-group-option:hover{ background:rgba(35,77,121,0.07); color:var(--ink); }
+  .service-group-option input{ accent-color:var(--accent); }
+  .provider-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 12px 7px 8px;
+    border:1.5px solid rgba(27,31,39,0.18);
+    border-radius:999px;
+    background:rgba(255,255,255,0.8);
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    user-select:none;
+    transition:border-color .15s ease, color .15s ease, transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 1px 0 rgba(255,255,255,0.7);
+    min-height:34px;
+  }
+  .provider-chip img{ width:15px; height:15px; object-fit:contain; display:block; }
+  .provider-chip[aria-pressed="true"]{
+    color:var(--ink);
+    background:linear-gradient(180deg, rgba(255,255,255,1), rgba(240,245,250,0.95));
+    border-color:var(--chip-color, var(--accent));
+    box-shadow:inset 0 0 0 1px var(--chip-color, var(--accent)), 0 4px 12px rgba(27,31,39,0.04);
+  }
+  .provider-chip[aria-pressed="false"]{ opacity:0.58; }
+  .provider-chip:hover{
+    opacity:1;
+    transform:translateY(-1px);
+  }
+
+  .filter-reset{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--accent-ink);
+    background:none;
+    border:none;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:6px 4px;
+  }
+
+  /* ---------- Matrix ---------- */
+
+  main{
+    max-width:1360px;
+    margin:26px auto 60px;
+    padding:0 28px;
+  }
+
+  .category-block{ margin-bottom:34px; scroll-margin-top:210px; }
+
+  .category-heading{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin:0 0 10px;
+    padding:0 6px 12px;
+    border-bottom:2px solid var(--ink);
+  }
+  .category-idx{
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--accent);
+  }
+  .category-name{
+    font-family:var(--font-mono);
+    font-weight:600;
+    font-size:17px;
+    letter-spacing:-0.005em;
+  }
+
+  .head-row{
+    display:grid;
+    grid-template-columns: 190px repeat(7, minmax(0, 1fr));
+    gap:0;
+    padding:0 0 8px;
+    margin-bottom:8px;
+  }
+  .head-row .cell{
+    font-family:var(--font-mono);
+    font-size:var(--provider-label-size, 11.5px);
+    color:var(--ink-soft);
+    padding:0 12px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    min-height:38px;
+    letter-spacing:0.01em;
+    transition:font-size .18s ease, gap .18s ease;
+  }
+  .head-row .cell img{ width:14px; height:14px; object-fit:contain; }
+  .head-row .cell.label{ padding-left:2px; }
+
+  .row{
+    display:grid;
+    grid-template-columns: 190px repeat(7, minmax(0, 1fr));
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:rgba(255,255,255,0.74);
+    box-shadow:0 12px 26px rgba(26,29,35,0.03);
+    overflow:hidden;
+    margin-bottom:10px;
+  }
+  .row:hover{ background:#fdfcfb; }
+
+  .cell{ padding:12px; min-width:0; }
+  .cell.label{
+    font-weight:600;
+    font-size:14px;
+    padding-left:14px;
+    padding-right:10px;
+    display:flex;
+    align-items:center;
+    color:var(--ink);
+    background:linear-gradient(180deg, rgba(255,255,255,0.72), rgba(248,247,244,0.72));
+    letter-spacing:-0.01em;
+  }
+
+  .cell.provider{ border-left:1px solid var(--line); }
+  .cell-label-mobile{ display:none; }
+
+  .chip-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+  .chip{
+    display:flex;
+    align-items:flex-start;
+    gap:7px;
+    font-size:12.75px;
+    line-height:1.4;
+    text-decoration:none;
+    color:var(--ink);
+    border-left:2.5px solid var(--chip-color, var(--line-strong));
+    padding-left:8px;
+    transition:opacity .15s ease, transform .15s ease;
+  }
+  .chip:hover{ transform:translateX(1px); }
+  .chip img{ width:15px; height:15px; object-fit:contain; margin-top:2px; flex:none; }
+  .chip.is-link:hover .chip-name{ color:var(--accent-ink); text-decoration:underline; }
+  .chip.is-plain{ color:var(--ink-soft); }
+  .cell-empty{ color:#b9b4a9; font-size:13px; }
+
+  .no-results{
+    display:none;
+    text-align:center;
+    padding:70px 20px;
+    color:var(--ink-soft);
+    font-family:var(--font-mono);
+    font-size:13.5px;
+  }
+  .no-results strong{ display:block; font-size:15px; color:var(--ink); margin-bottom:6px; font-family:var(--font-sans); }
+
+  /* ---------- Footer ---------- */
+
+  footer{
+    border-top:1px solid var(--line);
+    padding:26px 28px 50px;
+  }
+  .footer-inner{
+    max-width:1360px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    gap:24px;
+    flex-wrap:wrap;
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .footer-inner a{ color:var(--ink-soft); }
+  .footer-inner a:hover{ color:var(--accent-ink); }
+
+  /* Night theme overrides come after the component rules so light states do not
+     reduce contrast when the pointer is over a row or provider chip. */
+  [data-theme="night"] #search,
+  [data-theme="night"] .service-group-select,
+  [data-theme="night"] .service-group-menu,
+  [data-theme="night"] .provider-chip,
+  [data-theme="night"] .row{
+    background:var(--surface);
+    color:var(--ink);
+  }
+  [data-theme="night"] #search::placeholder{ color:#8fa2b2; }
+  [data-theme="night"] .provider-chip[aria-pressed="true"]{
+    background:var(--surface-soft);
+    color:var(--ink);
+  }
+  [data-theme="night"] .row:hover{ background:var(--surface-soft); }
+  [data-theme="night"] .cell.label{
+    background:linear-gradient(180deg, var(--surface-soft), var(--surface));
+    color:var(--ink);
+  }
+  [data-theme="night"] .cell.provider{ background:var(--surface); }
+  [data-theme="night"] .chip{ color:var(--ink); }
+  [data-theme="night"] .chip.is-plain{ color:var(--ink-soft); }
+  [data-theme="night"] .cell-empty{ color:#8295a5; }
+  [data-theme="night"] .head-row .cell,
+  [data-theme="night"] .mark-sub,
+  [data-theme="night"] .stats-row,
+  [data-theme="night"] .service-group-label{ color:var(--ink-soft); }
+
+  /* ---------- Responsive: stacked cards ---------- */
+
+  @media (max-width: 880px){
+    .site-header{ padding:14px 16px 0; }
+    .header-row{ gap:14px; }
+    .theme-toggle{ margin-left:auto; }
+    .search-wrap{
+      flex:1 1 100%;
+      max-width:none;
+      min-width:0;
+    }
+    main{ padding-left:16px; padding-right:16px; }
+    .filter-row{ padding-bottom:12px; }
+
+    .head-row{ display:none; }
+
+    .row{
+      display:flex;
+      flex-direction:column;
+      padding:12px 0;
+      gap:2px;
+      border-radius:12px;
+      overflow:visible;
+    }
+    .cell.label{
+      font-family:var(--font-mono);
+      font-weight:600;
+      font-size:13px;
+      padding:0 10px 8px;
+      background:none;
+      border-bottom:1px solid var(--line);
+    }
+    .cell.provider{
+      border-left:none;
+      padding:8px 10px;
+      border-top:1px dashed var(--line);
+    }
+    .cell-label-mobile{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-family:var(--font-mono);
+      font-size:10.5px;
+      color:var(--chip-color, var(--ink-soft));
+      margin-bottom:6px;
+    }
+    .cell-label-mobile img{ width:13px; height:13px; object-fit:contain; }
+    .cell.provider.is-empty{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-row">
+    <div class="mark">
+      <span class="mark-glyph" aria-hidden="true">▦</span>
+      <div class="mark-text">
+        <span class="mark-title">Cloud Service Atlas</span>
+        <span class="mark-sub">AWS · Azure · GCP · IBM · Oracle · Alibaba · Huawei</span>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <input id="search" type="search" autocomplete="off" placeholder="Search a service — “object storage”, “Lambda”, “Kubernetes”…" aria-label="Search services">
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">
+      <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+      <span class="theme-toggle-label">Night</span>
+    </button>
+  </div>
+  <div class="stats-row" id="stats" aria-live="polite"></div>
+  <div class="filter-row" id="providerFilters"></div>
+</header>
+
+<main id="matrix"></main>
+
+<div class="no-results" id="noResults">
+  <strong>No services match that search.</strong>
+  Try a shorter term, or clear the provider filters above.
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      Data and structure adapted from <a href="https://github.com/ilyas-it83/CloudComparer" target="_blank" rel="noopener">ilyas-it83/CloudComparer</a> by Ilyas F, MIT licensed. This build is a static, single-file HTML/CSS/JS rebuild of the original Jekyll site.
+    </div>
+    <div>
+      Not affiliated with AWS, Microsoft, Google, IBM, Oracle, Alibaba or Huawei. Service names and logos belong to their respective owners.
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var DATA = [{"category":"Compute","subcategory":"Shared Web hosting","aws":[{"name":"AWS Amplify","ref":"https://aws.amazon.com/amplify/hosting/","icon":"Arch_AWS-Amplify_64.png"}],"azure":[{"name":"Web Apps","ref":"https://azure.microsoft.com/en-us/services/app-service/web/","icon":"Azure App Service - Web App (was Websites).png"}],"google":[{"name":"Firebase","ref":"https://firebase.google.com/docs/hosting","icon":"Firebase.png"}],"ibm":[{"name":"Web hosting services","ref":"https://www.ibm.com/cloud/websites","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[{"name":"Web Hosting","ref":"https://www.alibabacloud.com/product/hosting","icon":"ecs.png"},{"name":"Simple Application Server","ref":"https://www.alibabacloud.com/product/swas","icon":"ecs.png"}],"huawei":[]},{"category":"Compute","subcategory":"Virtual Server","aws":[{"name":"Amazon EC2","ref":"https://aws.amazon.com/ec2/","icon":"Arch_Amazon-EC2_64.png"}],"azure":[{"name":"Azure Virtual Machine","ref":"https://docs.microsoft.com/azure/virtual-machines/","icon":"Azure Virtual Machine.png"}],"google":[{"name":"Compute Engine","ref":"https://cloud.google.com/compute/","icon":"Compute-Engine.png"}],"ibm":[{"name":"Classic Virtual Server","ref":"https://cloud.ibm.com/docs/vsi?topic=virtual-servers-about-public-virtual-servers","icon":"virtual-server.png"},{"name":"Virtual Server for VPC (x86 & s390x)","ref":"https://cloud.ibm.com/docs/vpc?topic=vpc-getting-started","icon":"virtual-server.png"},{"name":"Power Systems Virtual Servers","ref":"https://cloud.ibm.com/docs/infrastructure/power-iaas?topic=power-iaas-about-power-virtual-server","icon":"virtual-server.png"},{"name":"Hyper Protect Virtual Server (LinuxONE)","ref":"https://cloud.ibm.com/catalog/services/hyper-protect-virtual-server","icon":"virtual-server.png"},{"name":"Quantum Services","ref":"https://cloud.ibm.com/quantum","icon":"CloudQuantumServices.svg"}],"oracle":[{"name":"Oracle Cloud Infrastructure Compute,","ref":"https://www.oracle.com/cloud/compute/","icon":"compute.png"}],"alibaba":[{"name":"Alibaba ECS","ref":"https://www.alibabacloud.com/product/ecs","icon":"ecs.png"}],"huawei":[{"name":"Huawei Cloud Elastic Cloud Server","ref":"https://www.huaweicloud.com/intl/en-us/product/ecs.html","icon":"ecs.png"}]},{"category":"Compute","subcategory":"Bare Metal Server","aws":[{"name":"Amazon EC2 Bare Metal Instance","ref":"https://aws.amazon.com/blogs/aws/category/compute/amazon-ec2-bare-metal/","icon":"Arch-Category_Compute_64.png"}],"azure":[{"name":"Azure Bare Metal Servers (Large   Instance Only for SAP Hana)","ref":"https://docs.microsoft.com/azure/virtual-machines/workloads/sap/hana-overview-architecture","icon":"Azure Virtual Machine.png"}],"google":[{"name":"Bare Metal Solution","ref":"https://cloud.google.com/bare-metal","icon":"Generic-GCP.png"}],"ibm":[{"name":"Bare Metal Servers","ref":"https://www.ibm.com/cloud/bare-metal-servers","icon":"virtual-server.png"}],"oracle":[{"name":"Oracle Bare Metal Servers","ref":"https://www.oracle.com/cloud/compute/bare-metal.html","icon":"compute.png"}],"alibaba":[{"name":"ECS Bare Metal Instance","ref":"https://www.alibabacloud.com/product/ebm","icon":"ecs.png"}],"huawei":[{"name":"Huawei Cloud Bare Metal Server","ref":"https://www.huaweicloud.com/intl/en-us/product/bms.html","icon":"bms.png"}]},{"category":"Compute","subcategory":"VMware","aws":[{"name":"VMC on AWS","ref":"https://aws.amazon.com/vmware/","icon":"Arch_VMware-Cloud-on-AWS_64.png"}],"azure":[{"name":"Azure VMware Solution","ref":"https://azure.microsoft.com/services/azure-vmware/","icon":"Azure Virtual Machine.png"}],"google":[{"name":"Google Cloud VMware Engine","ref":"https://cloud.google.com/vmware-engine","icon":"Generic-GCP.png"}],"ibm":[{"name":"VMware Solutions Shared","ref":"https://cloud.ibm.com/infrastructure/vmware-solutions/console","icon":"virtual-server.png"},{"name":"VMware Solutions Dedicated","ref":"https://cloud.ibm.com/infrastructure/vmware-solutions/console","icon":"virtual-server.png"},{"name":"VMware Regulated Workloads","ref":"https://cloud.ibm.com/infrastructure/vmware-solutions/console","icon":"virtual-server.png"},{"name":"VMware Solutions Dedicated - Security & Compliance Readiness Bundle","ref":"https://cloud.ibm.com/infrastructure/vmware-solutions/console","icon":"virtual-server.png"}],"oracle":[{"name":"Oracle Cloud VMWare Solution","ref":"https://docs.oracle.com/en-us/iaas/Content/VMware/Concepts/ocvsoverview.htm","icon":"none.png"}],"alibaba":[],"huawei":[]},{"category":"Compute","subcategory":"Virtual Dedicated Host","aws":[{"name":"Amazon EC2 Dedicated Hosts","ref":"https://aws.amazon.com/ec2/dedicated-hosts/","icon":"Arch-Category_Compute_64.png"},{"name":"AWS Nitro Enclaves","ref":"https://aws.amazon.com/ec2/nitro/nitro-enclaves/","icon":"Arch_AWS-Nitro-Enclaves_64.png"}],"azure":[{"name":"Azure Dedicated Host","ref":"https://azure.microsoft.com/services/virtual-machines/dedicated-host/","icon":"none.png"}],"google":[{"name":"Sole Tenant Node (Beta)","ref":"https://cloud.google.com/compute/docs/nodes/","icon":"Compute-Engine.png"}],"ibm":[{"name":"Dedicated Virtual Servers Infrastructure (VSi)","ref":"https://cloud.ibm.com/docs/vsi?topic=virtual-servers-dedicated-virtual-servers","icon":"virtual-server.png"},{"name":"Dedicated host for VPC","ref":"https://cloud.ibm.com/vpc-ext/provision/dedicatedHost","icon":"none.png"}],"oracle":[{"name":"Dedicated Virtual Machine Hosts","ref":"https://docs.oracle.com/en-us/iaas/Content/Compute/Concepts/dedicatedvmhosts.htm","icon":"compute.png"}],"alibaba":[{"name":"Dedicated Host","ref":"https://www.alibabacloud.com/product/ddh","icon":"alibaba.png"}],"huawei":[{"name":"Huawei Cloud Dedicate Host","ref":"https://www.huaweicloud.com/intl/en-us/product/deh.html","icon":"deh.png"}]},{"category":"Compute","subcategory":"High Performance Computing","aws":[{"name":"High Performance Computing","ref":"https://aws.amazon.com/hpc/","icon":"Arch_AWS-ParallelCluster_64.png"},{"name":"AWS ParallelCluster","ref":"https://aws.amazon.com/hpc/parallelcluster/","icon":"Arch_AWS-ParallelCluster_64.png"},{"name":"Elastic Fabric Adapter","ref":"https://aws.amazon.com/hpc/efa/","icon":"Arch_Elastic-Fabric-Adapter_64.png"},{"name":"NICE DCV","ref":"https://aws.amazon.com/hpc/dcv/","icon":"Arch_NICE-DCV_64.png"}],"azure":[{"name":"Azure High Performance Compute","ref":"https://azure.com/hpc/","icon":"none.png"}],"google":[{"name":"High performance computing","ref":"https://cloud.google.com/solutions/hpc","icon":"none.png"}],"ibm":[{"name":"IBM Spectrum LSF","ref":"https://cloud.ibm.com/catalog/content/terraform-1623200063-71606cab-c6e1-4f95-a47a-2ce541dcbed8-global","icon":"Spectrum_icon.png"},{"name":"IBM Spectrum Symphony","ref":"https://cloud.ibm.com/catalog/content/terraform-1627942334-78300480-b376-4185-9812-b7ae00d82765-global","icon":"Symphony_icon.png"}],"oracle":[{"name":"Oracle Dedicated Virtual Machine Hosts","ref":"https://docs.oracle.com/en-us/iaas/Content/Compute/Concepts/dedicatedvmhosts.htm","icon":"compute.png"}],"alibaba":[],"huawei":[]},{"category":"Compute","subcategory":"Container Registration Service","aws":[{"name":"Amazon Elastic Container Registry (ECR)","ref":"https://aws.amazon.com/ecr/","icon":"Arch_Amazon-Elastic-Container-Registry_64.png"}],"azure":[{"name":"Azure Container Registry ","ref":"https://azure.microsoft.com/services/container-registry/","icon":"Microsoft Azure.png"}],"google":[{"name":"Artifact Registry","ref":"https://cloud.google.com/artifact-registry/","icon":"artifact-registry.png"}],"ibm":[{"name":"IBM Cloud Container Registry","ref":"https://www.ibm.com/cloud/container-registry","icon":"registry_icon.svg"}],"oracle":[{"name":"Oracle Cloud Infrastructure Registry","ref":"https://cloud.oracle.com/containers/registry","icon":"containerregistry.png"}],"alibaba":[{"name":"Container Registry","ref":"https://www.alibabacloud.com/product/container-registry","icon":"ContainerServi.png"}],"huawei":[{"name":"Software Repository for Container","ref":"https://www.huaweicloud.com/intl/en-us/product/swr.html","icon":"swr.png"}]},{"category":"Compute","subcategory":"Container Management Service","aws":[{"name":"Amazon Elastic Container Service (ECS)","ref":"https://aws.amazon.com/ecs/","icon":"Arch_Amazon-Elastic-Container-Service_64.png"},{"name":"Amazon Elastic Kubernetes Service (EKS)","ref":"https://aws.amazon.com/eks/","icon":"Arch_Amazon-Elastic-Kubernetes-Service_64.png"},{"name":"Red Hat Openshift on AWS","ref":"https://aws.amazon.com/rosa/","icon":"Arch_Red-Hat-OpenShift_64.png"},{"name":"Bottlerocket","ref":"https://aws.amazon.com/bottlerocket/","icon":"Arch_Bottlerocket_64.png"}],"azure":[{"name":"Azure Kubernetes Service (AKS)","ref":"https://azure.microsoft.com/services/kubernetes-service/","icon":"Azure Kubernetes Service.png"},{"name":"Azure Container Instances","ref":"https://azure.microsoft.com/services/container-instances/","icon":"Azure Container Service.png"},{"name":"Azure Red Hat OpenShift","ref":"https://azure.microsoft.com/services/openshift/","icon":"Microsoft Azure.png"}],"google":[{"name":"Kubernetes Engine","ref":"https://cloud.google.com/kubernetes-engine/","icon":"Container-Engine.png"}],"ibm":[{"name":"IBM Cloud Kubernetes Service","ref":"https://www.ibm.com/cloud/container-service","icon":"containerServiceIcon.svg"},{"name":"Redhat Openshift Kubernetes Service","ref":"https://cloud.ibm.com/kubernetes/catalog/create?platformType=openshift","icon":"containerServiceIcon.svg"},{"name":"IBM Cloud Code Engine","ref":"https://cloud.ibm.com/codeengine","icon":"codeEngineBright.svg"}],"oracle":[{"name":"Container Engine for Kubernetes (OKE)","ref":"https://cloud.oracle.com/containers/kubernetes-engine","icon":"oke.png"}],"alibaba":[{"name":"Container Service","ref":"https://www.alibabacloud.com/product/container-service","icon":"ContainerServi.png"},{"name":"Container Service for Kubernetes","ref":"https://www.alibabacloud.com/product/kubernetes","icon":"ContainerServi.png"}],"huawei":[{"name":"Cloud Container Instance","ref":"https://www.huaweicloud.com/product/cci.html","icon":"cci.png"},{"name":"Cloud Container Engine","ref":"https://www.huaweicloud.com/intl/en-us/product/cce.html","icon":"cce.png"}]},{"category":"Compute","subcategory":"Serverless compute for containers","aws":[{"name":"AWS Fargate","ref":"https://aws.amazon.com/fargate/","icon":"Arch_AWS-Fargate_64.png"},{"name":"AWS Proton","ref":"https://aws.amazon.com/proton/","icon":"Arch_AWS-Proton_64.png"}],"azure":[{"name":"Azure Container Instances","ref":"https://azure.microsoft.com/services/container-instances/","icon":"Azure Container Service.png"},{"name":"Azure Container Apps","ref":"https://azure.microsoft.com/en-us/services/container-apps/","icon":"Azure Container Service.png"}],"google":[{"name":"Google Cloud Run","ref":"https://cloud.google.com/run","icon":"Cloud-Run.png"}],"ibm":[{"name":"IBM Cloud Code Engine","ref":"https://cloud.ibm.com/codeengine","icon":"codeEngineBright.svg"}],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Compute","subcategory":"Serverless container platform","aws":[{"name":"AWS App Runner","ref":"https://aws.amazon.com/apprunner/","icon":"Arch_AWS-AppRunner.png"}],"azure":[{"name":"Azure Container Apps","ref":"https://azure.microsoft.com/en-us/services/container-apps/","icon":"Azure Container Service.png"}],"google":[{"name":"Google Cloud Run","ref":"https://cloud.google.com/run","icon":"Cloud-Run.png"}],"ibm":[{"name":"IBM Cloud Code Engine","ref":"https://cloud.ibm.com/codeengine","icon":"codeEngineBright.svg"}],"oracle":[{"name":"Oracle Functions","ref":"https://docs.oracle.com/en-us/iaas/Content/Functions/Concepts/functionsoverview.htm","icon":"functions.png"}],"alibaba":[],"huawei":[]},{"category":"Compute","subcategory":"Micro Services App Development Platform","aws":[{"name":"AWS Lambda","ref":"https://aws.amazon.com/lambda/","icon":"Arch_AWS-Lambda_64.png"}],"azure":[{"name":"Azure Service Fabric","ref":"https://azure.microsoft.com/services/service-fabric/","icon":"Azure Service Fabric.png"},{"name":"Azure Functions","ref":"https://azure.microsoft.com/services/functions/","icon":"Azure Functions.png"},{"name":"Event Grid","ref":"https://azure.microsoft.com/services/event-grid/","icon":"Azure Event Grid.png"}],"google":[{"name":"Google Cloud Functions","ref":"https://cloud.google.com/functions/","icon":"Cloud-Functions.png"},{"name":"EventArc","ref":"https://cloud.google.com/eventarc","icon":"Eventarc.png"}],"ibm":[{"name":"IBM Cloud Code Engine","ref":"https://cloud.ibm.com/codeengine","icon":"codeEngineBright.svg"},{"name":"IBM Cloud Functions","ref":"https://www.ibm.com/cloud/functions","icon":"ibm-cloud-functions.png"}],"oracle":[{"name":"Oracle Functions","ref":"https://www.oracle.com/cloud/cloud-native/functions/","icon":"functions.png"}],"alibaba":[{"name":"Function Compute","ref":"https://www.alibabacloud.com/product/function-compute","icon":"ecs.png"}],"huawei":[{"name":"FunctionGraph","ref":"https://www.huaweicloud.com/intl/en-us/product/functiongraph.html","icon":"none.png"}]},{"category":"Compute","subcategory":"Serverless app repository","aws":[{"name":"AWS Serverless Application Repository","ref":null,"icon":"Arch_AWS-Serverless-Application-Repository_64.png"}],"azure":[],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Compute","subcategory":"Virtual Private Servers","aws":[{"name":"Amazon Lightsail","ref":"https://amazonlightsail.com/","icon":"Arch_Amazon-Lightsail_64.png"}],"azure":[{"name":"Azure App Service Environment","ref":"https://docs.microsoft.com/azure/app-service-web/app-service-app-service-environment-intro","icon":"Azure App Service - Web App (was Websites).png"}],"google":[],"ibm":[{"name":"Classic Virtual Server","ref":"https://cloud.ibm.com/docs/vsi?topic=virtual-servers-about-public-virtual-servers","icon":"virtual-server.png"},{"name":"Virtual Server for VPC","ref":"https://cloud.ibm.com/docs/vpc-on-classic-vsi?topic=vpc-on-classic-vsi-getting-started","icon":"virtual-server.png"}],"oracle":[],"alibaba":[{"name":"Simple Application Server","ref":"https://www.alibabacloud.com/product/swas#product-details","icon":"alibaba.png"}],"huawei":[{"name":"Hyper Elastic Cloud Server","ref":"https://www.huaweicloud.com/product/hecs.html","icon":"ecs.png"}]},{"category":"Compute","subcategory":"Auto Scaling","aws":[{"name":"Auto Scaling","ref":"https://aws.amazon.com/ec2/autoscaling/","icon":"Arch_Amazon-EC2-Auto-Scaling_64.png"}],"azure":[{"name":"Azure Autoscale","ref":"https://azure.microsoft.com/features/autoscale/","icon":"Azure App Service - Web App (was Websites).png"},{"name":"Virtual Machine Scale Sets","ref":"https://docs.microsoft.com/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-overview","icon":"Azure VM Scale Set.png"}],"google":[{"name":"Auto Scaler","ref":"https://cloud.google.com/compute/docs/autoscaler/","icon":"Blue-Hexagon.png"}],"ibm":[{"name":"Auto Scaling","ref":"https://www.ibm.com/cloud/auto-scaling","icon":"auto-scaling.png"}],"oracle":[{"name":"Oracle Autoscaling Instance Pools","ref":"https://docs.oracle.com/en-us/iaas/Content/Compute/Concepts/instancemanagement.htm","icon":"instancepools.png"}],"alibaba":[{"name":"Auto Scaling","ref":"https://www.alibabacloud.com/product/auto-scaling","icon":"alibaba.png"}],"huawei":[{"name":"Auto Scaling","ref":"https://www.huaweicloud.com/intl/en-us/product/as.html","icon":"as.png"}]},{"category":"Compute","subcategory":"Batch Jobs","aws":[{"name":"AWS Batch","ref":"https://aws.amazon.com/batch/","icon":"Arch_AWS-Batch_64.png"}],"azure":[{"name":"Azure Batch","ref":"https://azure.microsoft.com/services/batch/","icon":"Azure Batch.png"}],"google":[{"name":"Preemptible VMs","ref":"https://cloud.google.com/preemptible-vms/","icon":"Compute-Engine.png"}],"ibm":[{"name":"IBM Cloud Code Engine","ref":"https://cloud.ibm.com/codeengine","icon":"codeEngineBright.svg"},{"name":"IBM Cloud Functions","ref":"https://www.ibm.com/cloud/functions","icon":"ibm-cloud-functions.png"}],"oracle":[{"name":"Oracle Burstable Instances","ref":"https://docs.oracle.com/en-us/iaas/Content/Compute/References/burstable-instances.htm","icon":"compute.png"}],"alibaba":[{"name":"Batch Compute","ref":"https://www.alibabacloud.com/product/batch-compute","icon":"alibaba.png"}],"huawei":[]},{"category":"Compute","subcategory":"App Development/ Deployment (Java /.Net /PHP /Python)","aws":[{"name":"AWS Elastic Beanstalk","ref":"https://aws.amazon.com/elasticbeanstalk/","icon":"Arch_AWS-Elastic-Beanstalk_64.png"}],"azure":[{"name":"Azure Web Apps","ref":"https://azure.microsoft.com/services/app-service/web/","icon":"Azure App Service - Web App (was Websites).png"},{"name":"Azure Cloud Services","ref":"https://azure.microsoft.com/services/cloud-services/","icon":"Azure Cloud Services - Web roles.png"}],"google":[{"name":"Google App engine","ref":"https://cloud.google.com/appengine/","icon":"App-Engine.png"}],"ibm":[{"name":"IBM Cloud Code Engine","ref":"https://cloud.ibm.com/codeengine","icon":"codeEngineBright.svg"}],"oracle":[{"name":"Oracle Application Container Cloud Service","ref":"https://docs.oracle.com/en/cloud/paas/app-container-cloud/index.html","icon":"applicationcontainer.png"},{"name":"Java Cloud Service","ref":"https://cloud.oracle.com/en_US/java","icon":"applicationcontainer.png"}],"alibaba":[{"name":"Enterprise Distributed Application Service","ref":"https://www.alibabacloud.com/product/edas","icon":"alibaba.png"}],"huawei":[]},{"category":"Compute","subcategory":"Event Driven Computing","aws":[{"name":"AWS Lambda","ref":"https://aws.amazon.com/lambda/","icon":"Arch_AWS-Lambda_64.png"}],"azure":[{"name":"Azure Functions","ref":"https://azure.microsoft.com/services/functions/","icon":"Azure Functions.png"},{"name":"Event Grid","ref":"https://azure.microsoft.com/services/event-grid/","icon":"Azure Event Grid.png"}],"google":[{"name":"Cloud Functions","ref":"https://cloud.google.com/functions/","icon":"Cloud-Functions.png"},{"name":"EventArc","ref":"https://cloud.google.com/eventarc","icon":"Eventarc.png"}],"ibm":[{"name":"IBM Cloud Code Engine","ref":"https://cloud.ibm.com/codeengine","icon":"codeEngineBright.svg"},{"name":"IBM Cloud Functions","ref":"https://www.ibm.com/cloud/functions","icon":"ibm-cloud-functions.png"}],"oracle":[{"name":"Oracle Functions","ref":"https://www.oracle.com/cloud-native/functions/","icon":"functions.png"}],"alibaba":[{"name":"Function Compute","ref":"https://www.alibabacloud.com/product/function-compute","icon":"ecs.png"}],"huawei":[{"name":"FunctionGraph","ref":"https://www.huaweicloud.com/intl/en-us/product/functiongraph.html","icon":"none.png"}]},{"category":"Storage","subcategory":"Object Storage","aws":[{"name":"Amazon Simple Storage Service (S3)","ref":"https://aws.amazon.com/documentation/s3/","icon":"Arch_Amazon-Simple-Storage-Service_64.png"}],"azure":[{"name":"Azure Blob Storage","ref":"https://azure.microsoft.com/services/storage/blobs/","icon":"Azure Storage - Blob.png"}],"google":[{"name":"Cloud Storage","ref":"https://cloud.google.com/storage/","icon":"Cloud-Storage.png"}],"ibm":[{"name":"Cloud Object Storage","ref":"https://cloud.ibm.com/docs/services/cloud-object-storage?topic=cloud-object-storage-about-ibm-cloud-object-storage","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Object Storage","ref":"https://www.oracle.com/cloud/storage/object-storage.html","icon":"buckets.png"}],"alibaba":[{"name":"Object Storage Service","ref":"https://www.alibabacloud.com/product/oss","icon":"OSS.png"}],"huawei":[{"name":"Object Storage Service","ref":"https://www.huaweicloud.com/intl/en-us/product/obs.html","icon":"obs.png"}]},{"category":"Storage","subcategory":"Virtual Machine Disk Storage","aws":[{"name":"Amazon Elastic Block Storage (EBS)","ref":"https://aws.amazon.com/ebs/","icon":"Arch_Amazon-Elastic-Block-Store_64.png"}],"azure":[{"name":"Azure Page Blobs / Premium Storage","ref":"https://azure.microsoft.com/services/storage/disks/","icon":"VHD data disk.png"},{"name":"Managed Disks","ref":"https://azure.microsoft.com/services/managed-disks/","icon":"VHD data disk.png"}],"google":[{"name":"Persistent Disk","ref":"https://cloud.google.com/persistent-disk/","icon":"Persistent-Disk.png"}],"ibm":[{"name":"Block Storage","ref":"https://cloud.ibm.com/docs/infrastructure/BlockStorage?topic=BlockStorage-About#getting-started-with-block-storage","icon":"ibmcloud.png"},{"name":"Block Storage for VPC","ref":"https://cloud.ibm.com/docs/vpc-on-classic-block-storage?topic=vpc-on-classic-block-storage-getting-started","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Block Volumes","ref":"https://www.oracle.com/cloud/storage/block-volumes.html","icon":"blockstorage.png"}],"alibaba":[{"name":"Block Storage","ref":null,"icon":"OSS.png"}],"huawei":[{"name":"Elastic Volume Service","ref":"https://www.huaweicloud.com/intl/en-us/product/evs.html","icon":"evs.png"}]},{"category":"Storage","subcategory":"File Storage (SMB Compatible)","aws":[{"name":"Amazon Elastic File System (EFS)","ref":"https://aws.amazon.com/efs/","icon":"Arch_Amazon-Elastic-File-System_64.png"},{"name":"Amazon FSx for Windows File Server","ref":"https://aws.amazon.com/fsx/windows/","icon":"Arch_Amazon-FSx-for-Windows-File-Server_64.png"},{"name":"Amazon FSx for Lustre","ref":"https://aws.amazon.com/fsx/lustre/","icon":"Arch_Amazon-FSx-for-Lustre_64.png"},{"name":"Amazon FSx for NetApp ONTAP","ref":"https://aws.amazon.com/fsx/netapp-ontap/","icon":"Arch_Amazon-FSx-for-NetApp-ONTAP_64.png"},{"name":"Amazon FSx for OpenZFS","ref":"https://aws.amazon.com/fsx/openzfs/","icon":"Arch_Amazon-FSx-for-OpenZFS_64.png"}],"azure":[{"name":"Azure Files","ref":"https://azure.microsoft.com/en-us/services/storage/files/","icon":"Azure Storage - Files.png"},{"name":"Azure NetApp Files","ref":"https://azure.microsoft.com/en-gb/services/netapp/","icon":"Azure NetApp Files.png"}],"google":[{"name":"File Store","ref":"http://cloud.google.com/filestore","icon":"Persistent-Disk.png"}],"ibm":[{"name":"File Storage","ref":"https://cloud.ibm.com/docs/infrastructure/FileStorage?topic=FileStorage-about#getting-started-with-file-storage","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle File Storage Services","ref":"https://docs.oracle.com/en-us/iaas/Content/File/Concepts/filestorageoverview.htm","icon":"fss.png"}],"alibaba":[{"name":"NAS File Storage","ref":"https://www.alibabacloud.com/product/nas","icon":"nas.png"}],"huawei":[{"name":"Scalable File Service","ref":"https://www.huaweicloud.com/intl/en-us/product/sfs.html","icon":"sfs.png"}]},{"category":"Storage","subcategory":"Long Term Cold Storage","aws":[{"name":"Amazon S3 Glacier","ref":"https://aws.amazon.com/s3/storage-classes/glacier/","icon":"Arch_Amazon-Simple-Storage-Service-Glacier_64.png"}],"azure":[{"name":"Azure Archive Storage","ref":"https://azure.microsoft.com/services/storage/archive/","icon":"Azure Storage.png"},{"name":"Azure Cool Storage","ref":"https://azure.microsoft.com/pricing/details/storage/blobs/","icon":"Azure Storage.png"}],"google":[{"name":"Cloud Storage","ref":"https://cloud.google.com/storage/","icon":"Cloud-Storage.png"}],"ibm":[{"name":"Object Storage-ColdVault","ref":"https://www.ibm.com/cloud/object-storage","icon":"ibmcloud.png"},{"name":"Archive","ref":"https://cloud.ibm.com/docs/infrastructure/cloud-object-storage-infrastructure?topic=cloud-object-storage-infrastructure-archiving-data","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Archive Storage","ref":"https://www.oracle.com/cloud/storage/archive-storage.html","icon":"storage.png"},{"name":"Oracle Cloud Object Storage Infrequent Access Tier","ref":"https://docs.oracle.com/en-us/iaas/Content/Object/Concepts/understandingstoragetiers.htm","icon":"none.png"}],"alibaba":[{"name":"Object Storage Archive","ref":"https://www.alibabacloud.com/product/oss","icon":"OSS.png"}],"huawei":[{"name":"Object Storage Service","ref":"https://www.huaweicloud.com/intl/en-us/product/obs.html","icon":"obs.png"}]},{"category":"Storage","subcategory":"Hybrid Storage/Storage Gateway","aws":[{"name":"AWS Storage Gateway","ref":"https://aws.amazon.com/storagegateway","icon":"Arch_AWS-Storage-Gateway_64.png"}],"azure":[{"name":"Azure Storsimple","ref":"https://azure.microsoft.com/services/storsimple/","icon":"Azure StorSimple.png"}],"google":[],"ibm":[],"oracle":[{"name":"Oracle Cloud Infrastructure Storage Gateway","ref":"https://www.oracle.com/cloud/storage/storage-gateway.html","icon":"none.png"}],"alibaba":[{"name":"Hybrid Cloud Storage Array","ref":"https://www.alibabacloud.com/product/storage-array","icon":"alibaba.png"}],"huawei":[{"name":"Cloud Storage Gateway","ref":"https://www.huaweicloud.com/product/csg.html","icon":"csg.png"}]},{"category":"Database","subcategory":"Relational Database Management Service","aws":[{"name":"Amazon Aurora","ref":"https://aws.amazon.com/rds/aurora/","icon":"Arch_Amazon-Aurora_64.png"},{"name":"Amazon RDS","ref":"https://aws.amazon.com/rds/","icon":"Arch_Amazon-RDS_64.png"}],"azure":[{"name":"Azure SQL Database","ref":"https://azure.microsoft.com/services/sql-database/","icon":"Azure SQL Database.png"},{"name":"SQL Server Stretch Database","ref":"https://azure.microsoft.com/services/sql-server-stretch-database/","icon":"Azure SQL Database.png"},{"name":"Azure Database for MySQL","ref":"https://azure.microsoft.com/services/mysql/","icon":"Azure SQL Database.png"},{"name":"Azure Database for PostgresSQL","ref":"https://azure.microsoft.com/services/postgresql/","icon":"Azure SQL Database.png"},{"name":"Azure SQL Database Edge","ref":"https://azure.microsoft.com/services/sql-database-edge/","icon":"Azure SQL Database.png"}],"google":[{"name":"Cloud SQL","ref":"https://cloud.google.com/sql/","icon":"Cloud-SQL.png"},{"name":"Cloud Spanner","ref":"https://cloud.google.com/spanner/","icon":"Cloud-Spanner.png"}],"ibm":[{"name":"Db2","ref":"https://cloud.ibm.com/catalog/services/db2","icon":"none.png"},{"name":"Db2 Hosted","ref":"https://cloud.ibm.com/catalog/services/db2-hosted","icon":"none.png"},{"name":"Informix","ref":"https://cloud.ibm.com/catalog/services/informix","icon":"ibmcloud.png"},{"name":"Databases for PostgreSQL","ref":"https://cloud.ibm.com/catalog/services/databases-for-postgresql","icon":"postgresql.svg"},{"name":"Databases for EDB","ref":"https://cloud.ibm.com/databases/databases-for-enterprisedb/create","icon":"edb.svg"},{"name":"Compose for MySQL(Beta)","ref":"https://cloud.ibm.com/catalog/services/compose-for-mysql","icon":"ibmcloud.png"},{"name":"Databases for MySQL","ref":"https://cloud.ibm.com/databases/databases-for-mysql/create","icon":"mysql.svg"},{"name":"Hyper Protect DBaaS for PostgreSQL","ref":"https://cloud.ibm.com/catalog/services/hyper-protect-dbaas-for-postgresql","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Database Cloud Service - Virtual Machine","ref":"https://www.oracle.com/database/vm-cloud.html","icon":"database.png"},{"name":"Oracle Database Cloud Service - Bare Metal","ref":"https://www.oracle.com/database/bare-metal-cloud.html","icon":"database.png"},{"name":"Oracle Exadata Cloud Service","ref":"https://www.oracle.com/engineered-systems/exadata/cloud-service/","icon":"database.png"},{"name":"Oracle Autonomous Data Warehouse","ref":"https://www.oracle.com/autonomous-database/autonomous-data-warehouse/","icon":"database.png"},{"name":"Oracle Autonomous Transaction Processing","ref":"https://www.oracle.com/autonomous-database/autonomous-transaction-processing/","icon":"database.png"},{"name":"MySQL Database Service","ref":"https://www.oracle.com/mysql/","icon":"database.png"},{"name":"MySQL Heatwave Service","ref":"https://docs.oracle.com/en-us/iaas/mysql-database/doc/heatwave.html","icon":"database.png"}],"alibaba":[{"name":"ApsaraDB for RDS MYSQL","ref":"https://www.alibabacloud.com/product/apsaradb-for-rds/","icon":"rds.png"},{"name":"ApsaraDB for RDS SQL Server","ref":"https://www.alibabacloud.com/product/apsaradb-for-rds/","icon":"rds.png"},{"name":"ApsaraDB for RDS PostgreSQL","ref":"https://www.alibabacloud.com/product/apsaradb-for-rds/","icon":"rds.png"},{"name":"Distributed Relational Database Service (DRDS) ","ref":"https://www.alibabacloud.com/product/drds?spm=a3c0i.11270126.675768.dnavproductsd7.6c8668dcRLNbeB","icon":"rds.png"}],"huawei":[{"name":"GaussDB(for openGauss)","ref":"https://www.huaweicloud.com/intl/en-us/product/gaussdb.html","icon":"GaussDBforOpenGauss.png"},{"name":"none.png","ref":"https://www.huaweicloud.com/intl/en-us/product/gaussdb_mysql.html","icon":"GaussDBforMysql.png"},{"name":"RDS for MySQL","ref":"https://www.huaweicloud.com/intl/en-us/product/mysql.html","icon":"mysql.png"},{"name":"RDS for PostgreSQL","ref":"https://www.huaweicloud.com/intl/en-us/product/pg.html","icon":"PostgreSQL.png"}]},{"category":"Database","subcategory":"Non Relational Database Management Service","aws":[{"name":"Amazon DynamoDB","ref":"https://aws.amazon.com/dynamodb/","icon":"Arch_Amazon-DynamoDB_64.png"},{"name":"Amazon DynamoDB Accelerator (DAX)","ref":"https://aws.amazon.com/dynamodb/dax/","icon":"Arch_Amazon-DynamoDB_64.png"},{"name":"Amazon DocumentDB (with MongoDB compatibility)","ref":"https://aws.amazon.com/documentdb/","icon":"Arch_Amazon-DocumentDB_64.png"},{"name":"Amazon Keyspaces (Apache Cassandra)","ref":"https://aws.amazon.com/keyspaces/","icon":"Arch_Amazon-Keyspaces_64.png"}],"azure":[{"name":"Azure CosmosDB","ref":"https://docs.microsoft.com/azure/cosmos-db/","icon":"Azure DocumentDB.png"},{"name":"Table Storage","ref":"https://azure.microsoft.com/services/storage/tables/","icon":"Azure Storage - Table.png"},{"name":"Azure Time Series Insights","ref":"https://azure.microsoft.com/services/time-series-insights/","icon":"Azure DocumentDB.png"}],"google":[{"name":"Cloud Datastore","ref":"https://cloud.google.com/datastore/","icon":"Cloud-Datastore.png"},{"name":"Cloud Firestore","ref":"https://cloud.google.com/firestore/","icon":"Cloud-Datastore.png"}],"ibm":[{"name":"Cloudant NoSQL DB","ref":"https://cloud.ibm.com/docs/services/Cloudant?topic=cloudant-overview","icon":"ibmcloud.png"},{"name":"Compose for JanusGraph","ref":"https://cloud.ibm.com/docs/services/ComposeForJanusGraph?topic=compose-for-janusgraph-about-compose-for-janusgraph","icon":"ibmcloud.png"},{"name":"Databases for MongoDB","ref":"https://cloud.ibm.com/catalog/services/databases-for-mongodb","icon":"mongodb.svg"},{"name":"Databases for etcd","ref":"https://cloud.ibm.com/databases/databases-for-etcd/create","icon":"etcd.svg"},{"name":"Databases for DataStax","ref":"https://cloud.ibm.com/databases/databases-for-cassandra/create","icon":"datastax.svg"},{"name":"Hyper Protect DBaaS for MongoDB","ref":"https://cloud.ibm.com/catalog/services/hyper-protect-dbaas-for-mongodb","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle NoSQL Database Cloud Service","ref":"https://www.oracle.com/database/nosql-cloud.html","icon":"NoSQL.png"},{"name":"Oracle Autonomous JSON Database","ref":"https://www.oracle.com/autonomous-database/autonomous-json-database/","icon":"database.png"}],"alibaba":[{"name":"Apsaradb for Mongodb","ref":"https://www.alibabacloud.com/product/apsaradb-for-mongodb","icon":"rds.png"},{"name":"Table Store","ref":"https://www.alibabacloud.com/product/table-store","icon":"rds.png"}],"huawei":[{"name":"GaussDB(for Mongo)","ref":"https://www.huaweicloud.com/intl/en-us/product/gaussdbformongo.html","icon":"none.png"},{"name":"GaussDB(for Cassandra)","ref":"https://www.huaweicloud.com/intl/en-us/product/gaussdbforcassandra.html","icon":"GaussDBforCassandra.png"},{"name":"Document Database Service","ref":"https://www.huaweicloud.com/intl/en-us/product/dds.html","icon":"none.png"},{"name":"Graph Engine Service","ref":"https://www.huaweicloud.com/intl/en-us/product/ges.html","icon":"ges.png"}]},{"category":"Database","subcategory":"Timeseries Database","aws":[{"name":"Amazon Timestream","ref":"https://aws.amazon.com/timestream/","icon":"Arch_Amazon-Timestream_64.png"}],"azure":[{"name":"Azure Time Series Insights","ref":"https://azure.microsoft.com/services/time-series-insights/","icon":"Azure DocumentDB.png"}],"google":[{"name":"Cloud Bigtable","ref":"https://cloud.google.com/bigtable/","icon":"Cloud-Bigtable.png"}],"ibm":[{"name":"Informix","ref":"https://www.ibm.com/analytics/informix","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[{"name":"HiTSDB (High-Performance Time Series Database)","ref":"https://www.alibabacloud.com/product/hitsdb?spm=a3c0i.11270126.675768.dnavproductsd8.6c8668dcRLNbeB","icon":"alibaba.png"},{"name":"Time Series Database for InfluxDB","ref":"https://www.alibabacloud.com/product/hitsdb_influxdb","icon":"alibaba.png"}],"huawei":[{"name":"GaussDB(for Influx)","ref":"https://www.huaweicloud.com/intl/en-us/product/gaussdbforinflux.html","icon":"GaussDBforInflux.png"}]},{"category":"Database","subcategory":"Graph Database","aws":[{"name":"Amazon Neptune","ref":"https://aws.amazon.com/neptune/","icon":"Arch_Amazon-Neptune_64.png"}],"azure":[],"google":[],"ibm":[{"name":"IBM Graph","ref":"https://www.ibm.com/analytics/ca/en/technology/cloud-data-services/graph/","icon":"none.png"}],"oracle":[{"name":"Graph Database","ref":"https://www.oracle.com/database/graph/","icon":"NoSQL.png"}],"alibaba":[{"name":"GraphDB (GDB) (Coming Soon...)","ref":"https://www.alibabacloud.com/product/databases","icon":"gdb.png"}],"huawei":[{"name":"FunctionGraph","ref":"https://www.huaweicloud.com/intl/en-us/product/functiongraph.html","icon":"none.png"},{"name":"Graph Engine Service (GES)","ref":"https://www.huaweicloud.com/intl/en-us/product/ges.html","icon":"ges.png"}]},{"category":"Database","subcategory":"In-Memory Data Store","aws":[{"name":"Amazon ElastiCache","ref":"https://aws.amazon.com/elasticache/","icon":"Arch_Amazon-ElastiCache_64.png"},{"name":"Amazon MemoryDB for Redis","ref":"https://aws.amazon.com/memorydb/","icon":"Arch_Amazon-MemoryDB-for-Redis_64.png"}],"azure":[{"name":"Azure Cache for Redis","ref":"https://azure.microsoft.com/en-us/services/cache/","icon":"Azure Cache including Redis.png"}],"google":[{"name":"Cloud MemoryStore","ref":"https://cloud.google.com/memorystore/","icon":"Blue-Hexagon.png"}],"ibm":[{"name":"Databases for Redis","ref":"https://cloud.ibm.com/catalog/services/databases-for-redis","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[{"name":"ApsaraDB for Redis","ref":"https://www.alibabacloud.com/product/apsaradb-for-redis","icon":"redis.png"}],"huawei":[{"name":"GaussDB(for Redis)","ref":"https://www.huaweicloud.com/intl/en-us/product/gaussdbforredis.html","icon":"GaussDBforRedis.png"},{"name":"Distributed Cache Service for Redis","ref":"https://www.huaweicloud.com/intl/en-us/product/dcs.html","icon":"dcs.png"}]},{"category":"Database","subcategory":"Data Warehousing","aws":[{"name":"Amazon Redshift","ref":"https://aws.amazon.com/redshift/","icon":"Arch_Amazon-Redshift_64.png"}],"azure":[{"name":"Azure Synapse Analytics","ref":"https://azure.microsoft.com/services/synapse-analytics/","icon":"Azure Data Warehouse.png"}],"google":[{"name":"BigQuery","ref":"https://cloud.google.com/bigquery/","icon":"BigQuery.png"}],"ibm":[{"name":"Db2 Warehouse","ref":"https://cloud.ibm.com/catalog/services/db2-warehouse","icon":"WoC_thicker_logo_10_23.svg"}],"oracle":[{"name":"Exadata Cloud Service","ref":"http://www.oracle.com/us/corporate/features/exadata-service/index.html","icon":"database.png"},{"name":"Autonomous Data Warehouse Cloud","ref":"https://cloud.oracle.com/en_US/datawarehouse/features","icon":"database.png"}],"alibaba":[{"name":"Alibaba MaxCompute ODPS","ref":"https://www.alibabacloud.com/product/maxcompute","icon":"MaxCompute.png"}],"huawei":[{"name":"GaussDB(DWS)","ref":"https://www.huaweicloud.com/intl/en-us/product/dws.html","icon":"dws.png"}]},{"category":"Migration Services","subcategory":"Database Migration Services","aws":[{"name":"AWS Database Migration Service","ref":"https://aws.amazon.com/dms/","icon":"Database_AWSDatabaseMigrationService.png"},{"name":"AWS Migration Hub","ref":"https://aws.amazon.com/migration-hub/","icon":"Arch_AWS-Migration-Hub_64.png"}],"azure":[{"name":"Azure Database Migration Service","ref":"https://azure.microsoft.com/en-us/services/database-migration/","icon":"Microsoft Azure.png"}],"google":[{"name":"Database Migration Service","ref":"https://cloud.google.com/database-migration","icon":"Generic-GCP.png"}],"ibm":[{"name":"Lift CLI","ref":"https://www.lift-cli.cloud.ibm.com/#docs","icon":"ibmcloud.png"},{"name":"VPC+ Cloud Migration","ref":"https://cloud.ibm.com/catalog/services/vpc-cloud-migration","icon":"ibmcloud.png"},{"name":"Rackware RMM","ref":"https://cloud.ibm.com/catalog/content/Rackware-Golden-Template-1.11-06545490-596b-4133-8516-8425a11b3265-global","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Lift Services","ref":"https://www.oracle.com/cloud/cloud-lift/","icon":"storage.png"}],"alibaba":[{"name":"Data Transmission Service","ref":"https://www.alibabacloud.com/product/data-transmission-service","icon":"dts.png"}],"huawei":[{"name":"Data Replication Service(DRS)","ref":"https://www.huaweicloud.com/intl/en-us/product/drs.html","icon":"drs.png"}]},{"category":"Migration Services","subcategory":"Server Migration Services","aws":[{"name":"AWS Server Migration Service","ref":"https://aws.amazon.com/server-migration-service/","icon":"aws.png"},{"name":"AWS Application Migration Service","ref":"https://aws.amazon.com/application-migration-service/","icon":"Arch_CloudEndure-Migration_64.png"},{"name":"AWS Migration Hub","ref":"https://aws.amazon.com/migration-hub/","icon":"Arch_AWS-Migration-Hub_64.png"}],"azure":[{"name":"Site Recovery","ref":"https://docs.microsoft.com/azure/site-recovery/site-recovery-migrate-to-azure","icon":"Azure Site Recovery.png"},{"name":"Azure App Service migration","ref":"https://azure.microsoft.com/en-us/services/app-service/migration-tools/","icon":"Microsoft Azure.png"}],"google":[{"name":"Migrate for Compute Engine","ref":"https://cloud.google.com/migrate/compute-engine","icon":"Generic-GCP.png"},{"name":"Migrate to Containers","ref":"https://cloud.google.com/migrate/containers","icon":"Generic-GCP.png"},{"name":"Application Migration","ref":"https://cloud.google.com/solutions/application-migration","icon":"Generic-GCP.png"}],"ibm":[{"name":"VPC+ Cloud Migration","ref":"https://cloud.ibm.com/catalog/services/vpc-cloud-migration","icon":"ibmcloud.png"},{"name":"Rackware RMM","ref":"https://cloud.ibm.com/catalog/content/Rackware-Golden-Template-1.11-06545490-596b-4133-8516-8425a11b3265-global","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[{"name":"Cloud Migration Tool","ref":"https://www.alibabacloud.com/help/doc-detail/62394.htm","icon":"ecs.png"}],"huawei":[{"name":"Server Migration Service","ref":"https://www.huaweicloud.com/intl/en-us/product/sms.html","icon":"sms.png"}]},{"category":"Migration Services","subcategory":"Small Scale Data Transfer Service","aws":[{"name":"AWS Snowball","ref":"https://aws.amazon.com/snowball","icon":"Storage-Content-Delivery_AWSImportExportSnowball.png"},{"name":"AWS Transfer Family","ref":"https://aws.amazon.com/aws-transfer-family/","icon":"Arch_AWS-Transfer-Family_64.png"}],"azure":[{"name":"Azure Import/Export","ref":"https://azure.microsoft.com/pricing/details/storage-import-export/","icon":"Microsoft Azure.png"}],"google":[{"name":"Storage Transfer Service","ref":"https://cloud.google.com/storage-transfer-service","icon":"Generic-GCP.png"}],"ibm":[{"name":"Data Transfer Service","ref":"https://cloud.ibm.com/docs/infrastructure/DataTransferService?topic=DataTransferService-about","icon":"ibmcloud.png"},{"name":"Aspera High-speed Transfer","ref":"https://cloud.ibm.com/docs/services/cloud-object-storage?topic=cloud-object-storage-aspera","icon":"ibmcloud.png"}],"oracle":[{"name":"Data Transfer Services - Hard Disk Import","ref":"https://www.oracle.com/cloud/storage/data-transfer.html","icon":"storage.png"}],"alibaba":[],"huawei":[{"name":"Data Express Service - Disk","ref":"https://www.huaweicloud.com/intl/en-us/product/des.html","icon":"des.png"}]},{"category":"Migration Services","subcategory":"Large Scale Data Transfer Solution (Petabyte Scale)","aws":[{"name":"AWS Snowball","ref":"https://aws.amazon.com/snowball/","icon":"Storage-Content-Delivery_AWSImportExportSnowball.png"},{"name":"AWS DataSync","ref":"https://aws.amazon.com/datasync/","icon":"Arch_AWS-DataSync_64.png"}],"azure":[{"name":"Azure Data Box","ref":"https://azure.microsoft.com/en-us/services/databox/","icon":"Microsoft Azure.png"}],"google":[{"name":"Transfer Appliance","ref":"https://cloud.google.com/transfer-appliance/","icon":"Generic-GCP.png"}],"ibm":[{"name":"Mass Data Migration Service","ref":"https://cloud.ibm.com/docs/infrastructure/mass-data-migration?topic=mass-data-migration-about","icon":"ibmcloud.png"}],"oracle":[{"name":"Data Transfer Services - Storage applicance import","ref":"https://www.oracle.com/cloud/storage/data-transfer.html","icon":"storage.png"}],"alibaba":[{"name":"Data Transport","ref":"https://www.alibabacloud.com/product/data-transport","icon":"alibaba.png"}],"huawei":[]},{"category":"Migration Services","subcategory":"Large Scale Data Transfer Solution (Terabyte Scale)","aws":[{"name":"AWS Snowcone","ref":"https://aws.amazon.com/snowcone/","icon":"Arch_AWS-Snowcone_64.png"},{"name":"AWS Snowball Edge Compute Optimized","ref":"https://aws.amazon.com/snowball/","icon":"Arch_AWS-Snowball-Edge_64.png"},{"name":"AWS DataSync","ref":"https://aws.amazon.com/datasync/","icon":"Arch_AWS-DataSync_64.png"}],"azure":[{"name":"Azure Data Box","ref":"https://azure.microsoft.com/en-us/services/databox/","icon":"Microsoft Azure.png"}],"google":[{"name":"Transfer Appliance","ref":"https://cloud.google.com/transfer-appliance/","icon":"Generic-GCP.png"}],"ibm":[{"name":"Mass Data Migration Service","ref":"https://cloud.ibm.com/docs/infrastructure/mass-data-migration?topic=mass-data-migration-about","icon":"ibmcloud.png"}],"oracle":[{"name":"Data Transfer Services - Storage applicance import","ref":"https://cloud.oracle.com/en_US/storage/data-transfer-services/features","icon":"storage.png"}],"alibaba":[{"name":"Data Transport","ref":"https://www.alibabacloud.com/product/data-transport","icon":"alibaba.png"}],"huawei":[{"name":"Data Express Service - Teleport","ref":"https://www.huaweicloud.com/intl/en-us/product/des.html","icon":"des.png"}]},{"category":"Migration Services","subcategory":"Large Scale Data Transfer Solution (Exabyte Scale)","aws":[{"name":"AWS Snowmobile","ref":"https://aws.amazon.com/snowmobile/","icon":"Storage-Content-Delivery_AWSImportExportSnowball.png"}],"azure":[],"google":[],"ibm":[],"oracle":[{"name":"Data Transfer Services","ref":"https://www.oracle.com/cloud/storage/data-transfer.html","icon":"storage.png"}],"alibaba":[],"huawei":[]},{"category":"Application Discovery Services","subcategory":"Application Discovery Services","aws":[{"name":"Application Discovery Service","ref":"https://aws.amazon.com/application-discovery/","icon":"Storage-Content-Delivery_AWSImportExportSnowball.png"}],"azure":[{"name":"Azure Active Directory","ref":"https://docs.microsoft.com/azure/active-directory/manage-apps/cloud-app-discovery","icon":"Azure Active Directory.png"}],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Networking & Content Delivery","subcategory":"Virtual Networking","aws":[{"name":"Amazon VPC","ref":"https://aws.amazon.com/vpc/","icon":"Networking_AmazonVPC.png"}],"azure":[{"name":"Azure VNet","ref":"https://azure.microsoft.com/services/virtual-network/","icon":"Azure App Service - Web App (was Websites).png"}],"google":[{"name":"Virtual Private Cloud","ref":"https://cloud.google.com/vpc","icon":"Cloud-Virtual-Network.png"}],"ibm":[{"name":"IBM Cloud VPC","ref":"https://cloud.ibm.com/docs/vpc?topic=vpc-getting-started","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Virtual Cloud Network","ref":"https://cloud.oracle.com/networking","icon":"vcn.png"}],"alibaba":[{"name":"Virtual Private Cloud","ref":"https://www.alibabacloud.com/product/vpc","icon":"vpc.png"}],"huawei":[{"name":"Virtual Private Cloud","ref":"https://www.huaweicloud.com/intl/en-us/product/vpc.html","icon":"vpc.png"}]},{"category":"Networking & Content Delivery","subcategory":"Virtual network connectivity","aws":[{"name":"AWS Transit Gateway","ref":"https://aws.amazon.com/transit-gateway/","icon":"Arch_AWS-Transit-Gateway_64.png"},{"name":"AWS VPC peering","ref":"https://docs.aws.amazon.com/vpc/latest/userguide/vpc-peering.html","icon":"Arch_Amazon-Virtual-Private-Cloud_64.png"}],"azure":[{"name":"Azure VNet Peering","ref":"https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-peering-overview","icon":"none.png"}],"google":[{"name":"Google VPC Peering","ref":"https://cloud.google.com/vpc/docs/vpc-peering/","icon":"Cloud-Virtual-Network.png"}],"ibm":[{"name":"Transit Gateway","ref":"https://cloud.ibm.com/interconnectivity/transit/provision","icon":"App_Icon_Transit_SVG.svg"}],"oracle":[{"name":"Oracle Dynamic Routing Gateway","ref":"https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingDRGs.htm","icon":"drg.png"}],"alibaba":[],"huawei":[]},{"category":"Networking & Content Delivery","subcategory":"Network Gateway","aws":[{"name":"AWS Site-to-Site VPN","ref":"https://aws.amazon.com/vpn/site-to-site-vpn/","icon":"Arch_AWS-Site-to-Site-VPN_64.png"},{"name":"AWS Client VPN","ref":"https://aws.amazon.com/vpn/client-vpn/","icon":"Arch_AWS-Client-VPN_64.png"}],"azure":[{"name":"Azure VPN Gateway","ref":"https://azure.microsoft.com/pricing/details/vpn-gateway/","icon":"Azure VPN Gateway.png"}],"google":[{"name":"Cloud VPN","ref":"https://cloud.google.com/products/networking/","icon":"Cloud-Virtual-Network.png"}],"ibm":[{"name":"Classic IPSEC-VPN","ref":"https://cloud.ibm.com/docs/infrastructure/iaas-vpn?topic=VPN-about-iaas-vpn","icon":"ibmcloud.png"},{"name":"VPN gateway for VPC","ref":"https://cloud.ibm.com/docs/vpc-on-classic-network?topic=vpc-on-classic-network---using-vpn-with-your-vpc","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle VPN Connect","ref":"https://www.oracle.com/cloud/networking/vpn-connect.html","icon":"oracle.png"}],"alibaba":[{"name":"VPN Gateway","ref":"https://www.alibabacloud.com/product/vpn-gateway","icon":"alibaba.png"}],"huawei":[{"name":"Virtual Private Network","ref":"https://www.huaweicloud.com/intl/en-us/product/vpn.html","icon":"vpn.png"}]},{"category":"Networking & Content Delivery","subcategory":"Content Delivery Network","aws":[{"name":"Amazon CloudFront","ref":"https://aws.amazon.com/documentation/elastic-beanstalk/","icon":"Storage-Content-Delivery_AmazonCloudFront.png"}],"azure":[{"name":"Azure CDN","ref":"https://azure.microsoft.com/services/cdn/","icon":"Azure Content Delivery Network (CDN).png"},{"name":"Azure Front Door","ref":"https://azure.microsoft.com/services/frontdoor/#overview","icon":"Azure Front Door.png"}],"google":[{"name":"Cloud CDN","ref":"https://cloud.google.com/cdn/","icon":"Cloud-CDN.png"}],"ibm":[{"name":"Content Delivery Network","ref":"https://cloud.ibm.com/docs/infrastructure/CDN?topic=CDN-about-content-delivery-networks-cdn-","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[{"name":"Alibaba Content Delivery Network","ref":"https://www.alibabacloud.com/product/cdn","icon":"cdn.png"}],"huawei":[{"name":"Huawei Cloud CDN","ref":"https://www.huaweicloud.com/intl/en-us/product/cdn.html","icon":"hwCDN.png"}]},{"category":"Networking","subcategory":"Networking & Content Delivery","aws":[{"name":"Amazon Route 53","ref":"https://aws.amazon.com/route53/","icon":"Networking_AmazonRoute53.png"}],"azure":[{"name":"Azure DNS","ref":"https://azure.microsoft.com/services/dns/","icon":"Azure DNS.png"}],"google":[{"name":"Cloud DNS","ref":"https://cloud.google.com/dns/","icon":"Cloud-DNS.png"}],"ibm":[{"name":"Internet Services","ref":"https://cloud.ibm.com/docs/infrastructure/cis?topic=cis-about-ibm-cloud-internet-services-cis","icon":"ibmcloud.png"},{"name":"DNS Services","ref":"https://cloud.ibm.com/catalog/services/dns-services","icon":"dns_svcs_icon.svg"}],"oracle":[{"name":"Oracle DNS","ref":"https://www.oracle.com/cloud/networking/dns/","icon":"EdgeServices.png"}],"alibaba":[{"name":"Alibaba Cloud DNS","ref":"https://www.alibabacloud.com/product/dns","icon":"DNS.png"}],"huawei":[{"name":"Domain Name Service","ref":"https://www.huaweicloud.com/intl/en-us/product/dns.html","icon":"dns.png"}]},{"category":"Networking","subcategory":"Global Traffic Management","aws":[{"name":"Amazon Route 53 Traffic Flow","ref":"https://aws.amazon.com/blogs/aws/new-route-53-traffic-flow/","icon":"Networking_AmazonRoute53.png"},{"name":"AWS Global Accelerator","ref":"https://aws.amazon.com/global-accelerator/","icon":"Arch_AWS-Global-Accelerator_64.png"},{"name":"AWS App Mesh","ref":"https://aws.amazon.com/app-mesh/","icon":"Arch_AWS-App-Mesh_64.png"}],"azure":[{"name":"Azure Traffic Manager","ref":"https://azure.microsoft.com/services/traffic-manager/","icon":"Azure Traffic Manager.png"}],"google":[],"ibm":[{"name":"Internet Services","ref":"https://cloud.ibm.com/docs/infrastructure/cis?topic=cis-about-ibm-cloud-internet-services-cis","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Traffic Management","ref":"https://www.oracle.com/cloud/networking/traffic-management.html","icon":"none.png"}],"alibaba":[],"huawei":[{"name":"Domain Name Service","ref":"https://www.huaweicloud.com/intl/en-us/product/dns.html","icon":"dns.png"}]},{"category":"Hybrid Cloud","subcategory":"Hybrid Cloud","aws":[{"name":"AWS Outposts","ref":"https://aws.amazon.com/outposts/","icon":"none.png"}],"azure":[{"name":"Azure Arc","ref":"https://azure.microsoft.com/services/azure-arc/","icon":"none.png"}],"google":[{"name":"Google Anthos","ref":"https://cloud.google.com/anthos","icon":"Anthos_icon.png"}],"ibm":[{"name":"Satellite","ref":"https://cloud.ibm.com/docs/satellite?topic=satellite-getting-started","icon":"none.png"},{"name":"Secure Gateway","ref":"https://cloud.ibm.com/catalog/services/secure-gateway","icon":"none.png"}],"oracle":[{"name":"Oracle Exadata Cloud@Customer","ref":"https://www.oracle.com/engineered-systems/exadata/cloud-at-customer/","icon":"none.png"},{"name":"Oracle Roving Edge Infrastructure","ref":"https://www.oracle.com/cloud/roving-edge-infrastructure/","icon":"none.png"}],"alibaba":[],"huawei":[{"name":"Huawei Cloud CLOUD Stack","ref":"https://www.huaweicloud.com/intl/en-us/product/huaweicloudstack.html","icon":"hcs.png"}]},{"category":"Networking & Content Delivery","subcategory":"Private Connectivity","aws":[{"name":"AWS Direct Connect","ref":"https://aws.amazon.com/directconnect/","icon":"Networking_AWSDirectConnect.png"},{"name":"AWS Private Link","ref":"https://aws.amazon.com/about-aws/whats-new/2018/04/introducing-aws-privatelink-in-the-eu-paris-region/","icon":"Networking_AWSDirectConnect.png"}],"azure":[{"name":"Azure Express Route","ref":"https://azure.microsoft.com/services/expressroute/","icon":"Azure ExpressRoute.png"}],"google":[{"name":"Cloud Hybrid Connectivity","ref":"https://cloud.google.com/hybrid-connectivity","icon":"Cloud-Interconnect.png"}],"ibm":[{"name":"Direct Link","ref":"https://cloud.ibm.com/docs/infrastructure/direct-link?topic=direct-link-overview-of-direct-link-offerings","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure FastConnect","ref":"https://www.oracle.com/cloud/networking/fastconnect/","icon":"service-fastconnect.png"}],"alibaba":[{"name":"Express Connect","ref":"https://www.alibabacloud.com/product/express-connect","icon":"expressconnect.png"}],"huawei":[{"name":"Direct Connect","ref":"https://www.huaweicloud.com/intl/en-us/product/dc.html","icon":"dc.png"}]},{"category":"Networking & Content Delivery","subcategory":"Load Balancers","aws":[{"name":"Elastic Load Balancing","ref":"https://aws.amazon.com/elasticloadbalancing/","icon":"aws.png"}],"azure":[{"name":"Azure Load Balancer","ref":"https://azure.microsoft.com/services/load-balancer/","icon":"Azure load balancer (automatic).png"}],"google":[{"name":"Cloud Load Balancing","ref":"https://cloud.google.com/load-balancing/","icon":"Cloud-Load-Balancing.png"}],"ibm":[{"name":"IBM Cloud Load Balancers","ref":"https://cloud.ibm.com/docs/vpc?topic=vpc-nlb-vs-elb","icon":"ibmcloud.png"},{"name":"IBM Cloud Load Balancer for VPC","ref":"https://cloud.ibm.com/catalog/infrastructure/load-balancer-group","icon":"ibmcloud.png"},{"name":"Citrix NetScaler VPX","ref":"https://cloud.ibm.com/catalog/infrastructure/load-balancer-group","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Load Balancing","ref":"https://www.oracle.com/cloud/networking/load-balancing/","icon":"LoadBalancing.png"}],"alibaba":[{"name":"Server Load Balancer","ref":"https://www.alibabacloud.com/product/server-load-balancer","icon":"SLB.png"}],"huawei":[{"name":"Elastic Load Balance","ref":"https://www.huaweicloud.com/intl/en-us/product/elb.html","icon":"elb.png"}]},{"category":"Developer Tools","subcategory":"Cloud Software Development Kit","aws":[{"name":"AWS Cloud9","ref":"https://aws.amazon.com/cloud9/","icon":"aws.png"},{"name":"AWS Code Star","ref":"https://aws.amazon.com/codestar/","icon":"Developer-Tools_AWSCodeCommit.png"},{"name":"AWS CodeCommit","ref":"https://aws.amazon.com/codecommit/","icon":"Developer-Tools_AWSCodeCommit.png"},{"name":"AWS CodeBuild","ref":"https://aws.amazon.com/codebuild/","icon":"aws.png"},{"name":"AWS CodeDeploy","ref":"https://aws.amazon.com/codedeploy/","icon":"Developer-Tools_AWSCodeDeploy.png"},{"name":"AWS CodePipeline","ref":"https://aws.amazon.com/codepipeline","icon":"Developer-Tools_AWSCodePipeline.png"},{"name":"AWS X-Ray","ref":"https://aws.amazon.com/xray/","icon":"aws.png"},{"name":"Amazon DevOps Guru","ref":"https://aws.amazon.com/devops-guru/","icon":"Arch_Amazon-DevOps-Guru_64.png"},{"name":"Amazon CodeGuru","ref":"https://aws.amazon.com/codeguru/","icon":"Arch_Amazon-CodeGuru_64.png"},{"name":"AWS Fault Injection Simulator","ref":"https://aws.amazon.com/fis/","icon":"Arch_AWS-Fault-Injection-Simulator_64.png"}],"azure":[{"name":"Azure Boards","ref":"https://azure.microsoft.com/services/devops/boards/","icon":"boards-icon-80.png"},{"name":"Azure Pipelines","ref":"https://azure.microsoft.com/services/devops/pipelines/","icon":"pipelines-icon-80.png"},{"name":"Azure Repos","ref":"https://azure.microsoft.com/services/devops/repos/","icon":"repos-icon-80.png"},{"name":"Azure Test Plans","ref":"https://azure.microsoft.com/services/devops/test-plans/","icon":"test-plans-icon-80.png"},{"name":"Azure Artifacts","ref":"https://azure.microsoft.com/services/devops/artifacts/","icon":"artifacts-icon-72.png"}],"google":[{"name":"Cloud Source Repositories","ref":"https://cloud.google.com/source-repositories/","icon":"Generic-GCP.png"}],"ibm":[{"name":"Continuous Delivery","ref":"https://cloud.ibm.com/docs/services/ContinuousDelivery?topic=ContinuousDelivery-getting-started","icon":"ibmcloud.png"},{"name":"DevOps Insights","ref":"https://cloud.ibm.com/docs/services/DevOpsInsights?topic=DevOpsInsights-getting-started#getting-started","icon":"ibmcloud.png"},{"name":"Globalization Pipeline","ref":"https://cloud.ibm.com/docs/services/GlobalizationPipeline?topic=GlobalizationPipeline-globalizationpipeline#globalizationpipeline","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Visual Builder Studio","ref":"https://www.oracle.com/application-development/visual-builder-studio/","icon":"appbuilder.png"}],"alibaba":[],"huawei":[{"name":"DevStar","ref":"https://developer.huaweicloud.com/resource/devstar.html","icon":"devstar.png"}]},{"category":"Developer Tools","subcategory":"Cloud Software Development Kit","aws":[{"name":"AWS Tools & SDKs","ref":"https://aws.amazon.com/tools/","icon":"Arch_AWS-Tools-and-SDKs_64.png"},{"name":"AWS Cloud Development Kit","ref":"https://aws.amazon.com/cdk/","icon":"Arch_AWS-Cloud-Development-Kit_64.png"}],"azure":[{"name":"Azure SDK Visual Studio","ref":"https://www.visualstudio.com/team-services/","icon":"Azure SDK.png"}],"google":[{"name":"Cloud SDK Cloud Tools for IntelliJ","ref":null,"icon":"Cloud-Tools-for-PowerShell.png"},{"name":"Cloud Tools for Android Studio","ref":null,"icon":"Cloud-Tools-for-PowerShell.png"},{"name":"Cloud Tools for Powershell","ref":null,"icon":"Cloud-Tools-for-PowerShell.png"},{"name":"Google Plugin for Eclipse","ref":null,"icon":"Cloud-Tools-for-PowerShell.png"}],"ibm":[{"name":"IBM Cloud Developer Tool","ref":"https://marketplace.visualstudio.com/items?itemName=IBM.ibm-developer","icon":"ibmcloud.png"},{"name":"Continuous Delivery","ref":"https://cloud.ibm.com/docs/services/ContinuousDelivery?topic=ContinuousDelivery-getting-started","icon":"ibmcloud.png"},{"name":"IBM Cloud API & SDK","ref":"https://cloud.ibm.com/docs?tab=api-docs","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle API Catalog","ref":"https://www.oracle.com/middleware/technologies/api-catalog.html","icon":"developer.png"},{"name":"Toolkit for Eclipse","ref":"https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/eclipsetoolkit.htm","icon":"developer.png"},{"name":"Oracle Developer Tools for Visual Studio","ref":"https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/visualstudio_intro.htm#Oracle_Developer_Tools_for_Visual_Studio","icon":"developer.png"}],"alibaba":[],"huawei":[{"name":"HUAWEI CLOUD SDKs","ref":"https://developer.huaweicloud.com/intl/en-us/sdk?all","icon":"none.png"}]},{"category":"Management Tools","subcategory":"Server Management Services","aws":[{"name":"AWS Systems Manager","ref":"https://aws.amazon.com/systems-manager/","icon":"aws.png"}],"azure":[{"name":"Azure Operational Insights ","ref":"https://azure.microsoft.com/resources/videos/azure-operational-insights-overview/","icon":"Operations Management Suite (OMS).png"}],"google":[],"ibm":[],"oracle":[{"name":"Oracle Management Cloud","ref":"https://cloud.oracle.com/management","icon":"oracle.png"}],"alibaba":[],"huawei":[]},{"category":"Management Tools","subcategory":"Cloud Deployment Templates/ Infra as Code","aws":[{"name":"AWS CloudFormation","ref":"https://aws.amazon.com/cloudformation/","icon":"Management-Tools_AWSCloudFormation.png"},{"name":"AWS OpsWorks","ref":"https://aws.amazon.com/opsworks/","icon":"Arch_AWS-OpsWorks_64.png"}],"azure":[{"name":"Azure Resource Manager","ref":"https://azure.microsoft.com/features/resource-manager/","icon":"Resource Group.png"},{"name":"Azure Building Blocks","ref":"https://azure.microsoft.com/resources/videos/azure-building-blocks-20-azbb/","icon":"Resource Group.png"}],"google":[{"name":"Cloud Resource Manager","ref":"https://cloud.google.com/resource-manager/","icon":"Generic-GCP.png"},{"name":"Cloud Deployment Manager","ref":"https://cloud.google.com/deployment-manager/","icon":"Generic-GCP.png"}],"ibm":[{"name":"Schematics","ref":"https://cloud.ibm.com/docs/schematics?topic=schematics-about-schematics","icon":"schematics_icon.svg"}],"oracle":[{"name":"Oracle Resource Manager","ref":"https://www.oracle.com/devops/resource-manager/","icon":"oracle.png"}],"alibaba":[{"name":"Resource Orchestration Service","ref":"https://www.alibabacloud.com/product/ros","icon":"ros.png"}],"huawei":[]},{"category":"Management Tools","subcategory":"Logging & Monitoring","aws":[{"name":"Amazon CloudWatch","ref":"https://aws.amazon.com/cloudwatch/","icon":"Management-Tools_AWSCloudFormation.png"},{"name":"AWS CloudTrail","ref":"https://aws.amazon.com/cloudtrail/","icon":"Management-Tools_AWSCloudTrail.png"},{"name":"AWS X-Ray","ref":"https://aws.amazon.com/xray/","icon":"Arch_AWS-X-Ray_64.png"},{"name":"AWS Distro for OpenTelemetry (Preview)","ref":"https://aws.amazon.com/otel/","icon":"Arch_AWS-Distro-for-OpenTelemetry_64.png"},{"name":"Amazon Managed Service for Grafana (Preview)","ref":"https://aws.amazon.com/grafana/","icon":"Arch_Amazon-Managed-Service-for-Grafana_64.png"},{"name":"Amazon Managed Service for Prometheus (Preview)","ref":"https://aws.amazon.com/prometheus/","icon":"Arch_Amazon-Managed-Service-for-Prometheus_64.png"}],"azure":[{"name":"Log Analytics","ref":"https://azure.microsoft.com/services/log-analytics/","icon":"OMS Log Analytics.png"},{"name":"Azure portal","ref":"https://portal.azure.com/#","icon":"Azure Management Portal.png"},{"name":"Application Insights","ref":"https://azure.microsoft.com/services/application-insights/","icon":"Azure Application Insights.png"}],"google":[{"name":"Google StackDriver","ref":"https://cloud.google.com/stackdriver/","icon":"Stackdriver.png"},{"name":"Monitoring","ref":"https://cloud.google.com/monitoring/","icon":"Monitoring.png"},{"name":"Logging","ref":"https://cloud.google.com/logging/","icon":"Logging.png"},{"name":"Error Reporting","ref":"https://cloud.google.com/error-reporting/","icon":"Error-Reporting.png"},{"name":"Trace","ref":"https://cloud.google.com/trace/","icon":"Trace.png"},{"name":"Debugger","ref":"https://cloud.google.com/debugger/","icon":"Debugger.png"}],"ibm":[{"name":"Monitoring","ref":"https://cloud.ibm.com/catalog/services/monitoring","icon":"ibmcloud.png"},{"name":"IBM Cloud Log Analysis with LogDNA","ref":"https://www.ibm.com/cloud/log-analysis","icon":"ibmcloud.png"},{"name":"IBM Cloud Activity Tracker with LogDNA","ref":"https://www.ibm.com/cloud/blog/track-your-cloud-activities-using-ibm-cloud-activity-tracker-with-logdna","icon":"ibmcloud.png"},{"name":"IBM Cloud Monitoring with Sysdig","ref":"https://www.ibm.com/cloud/sysdig","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Logging","ref":"https://www.oracle.com/devops/logging/","icon":"oracle.png"},{"name":"Oracle Logging Analytics","ref":"https://www.oracle.com/manageability/logging-analytics/","icon":"oracle.png"},{"name":"Oracle Cloud Infrastructure Monitoring","ref":"https://www.oracle.com/devops/monitoring/","icon":"oracle.png"},{"name":"Application Performance Monitoring (limited availability)","ref":null,"icon":"oracle.png"},{"name":"Oracle Service Connector Hub","ref":"https://www.oracle.com/devops/service-connector-hub/","icon":"oracle.png"},{"name":"Management Cloud","ref":null,"icon":"AppPerfMonitoring.png"}],"alibaba":[{"name":"CloudMonitor","ref":"https://www.alibabacloud.com/product/cloud-monitor","icon":"CloudMonitor.png"},{"name":"ActionTrail","ref":"https://www.alibabacloud.com/product/actiontrail","icon":"CloudMonitor.png"},{"name":"Application Real-Time Monitoring Service","ref":"https://www.alibabacloud.com/product/arms","icon":"CloudMonitor.png"}],"huawei":[{"name":"LTS","ref":"https://www.huaweicloud.com/intl/en-us/product/lts.html","icon":"lts.png"},{"name":"AOM","ref":"https://www.huaweicloud.com/intl/en-us/product/aom.html","icon":"aom.png"},{"name":"CES","ref":"https://www.huaweicloud.com/intl/en-us/product/ces.html","icon":"ces.png"}]},{"category":"Management Tools","subcategory":"Resource / Configuration Inventory","aws":[{"name":"AWS Config","ref":"https://aws.amazon.com/config/","icon":"Management-Tools_AWSConfig.png"},{"name":"AWS License Manager","ref":"https://aws.amazon.com/license-manager/","icon":"Arch_AWS-License-Manager_64.png"}],"azure":[{"name":"Azure portal (audit logs)","ref":null,"icon":"Azure Management Portal.png"}],"google":[{"name":"Cloud Security Scanner","ref":null,"icon":"Generic-GCP.png"},{"name":"Cloud Data Loss Prevention Api","ref":"https://cloud.google.com/dlp/","icon":"Generic-GCP.png"},{"name":"Access Transparency (Beta)","ref":"https://cloud.google.com/access-transparency/","icon":"Generic-GCP.png"}],"ibm":[{"name":"App Configuration","ref":"https://cloud.ibm.com/catalog/services/app-configuration","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Governance Services","ref":"https://cloud.oracle.com/en_US/governance","icon":"service-governance.png"}],"alibaba":[{"name":"Alibaba Log Service","ref":"https://www.alibabacloud.com/product/log-service","icon":"log-service.png"}],"huawei":[]},{"category":"Management Tools","subcategory":"Server Automation","aws":[{"name":"AWS OpsWorks","ref":"https://aws.amazon.com/opsworks/","icon":"Management-Tools_AWSOpsWorks.png"}],"azure":[{"name":"Resource Manager","ref":"https://azure.microsoft.com/features/resource-manager/","icon":"Resource Group.png"},{"name":"Azure Automation","ref":"https://docs.microsoft.com/azure/automation/","icon":"Azure Automation.png"},{"name":"VM Extentions","ref":"https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-extensions-features","icon":"Azure VM symbol only.png"}],"google":[],"ibm":[],"oracle":[{"name":"Oracle Cloud Infrastructure OS Management","ref":"https://docs.oracle.com/en-us/iaas/os-management/osms/index.htm","icon":"oracle.png"},{"name":"Oracle Resource Manager","ref":"https://www.oracle.com/devops/resource-manager/","icon":"oracle.png"}],"alibaba":[{"name":"Resource Orchestration Service ","ref":"https://www.alibabacloud.com/product/ros","icon":"ros.png"}],"huawei":[]},{"category":"Management Tools","subcategory":"Server Automation","aws":[{"name":"AWS Service Catalog","ref":"https://aws.amazon.com/servicecatalog/","icon":"Management-Tools_AWSServiceCatalog.png"}],"azure":[],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Management Tools","subcategory":"Cloud Cost / Performance / Security Advisor","aws":[{"name":"AWS Trusted Advisor","ref":"https://aws.amazon.com/premiumsupport/trustedadvisor/","icon":"Arch_AWS-Trusted-Advisor_64.png"},{"name":"AWS Well-Architected Tool","ref":"https://aws.amazon.com/well-architected-tool/","icon":"Arch_AWS-Well-Architected-Tool_64.png"},{"name":"AWS Cost Management","ref":"https://aws.amazon.com/aws-cost-management/","icon":"Arch-Category_AWS-Cost-Management_64.png"},{"name":"AWS Cost Explorer","ref":"https://aws.amazon.com/aws-cost-management/aws-cost-explorer/","icon":"Arch_AWS-Cost-Explorer_64.png"},{"name":"AWS Compute Optimizer","ref":"https://aws.amazon.com/compute-optimizer/","icon":"Arch_AWS-Compute-Optimizer_64.png"}],"azure":[{"name":"Azure Advisor","ref":"https://azure.microsoft.com/services/advisor/","icon":"Azure Security Center.png"},{"name":"Azure Cost Management","ref":"https://azure.microsoft.com/services/cost-management/","icon":"Azure Security Center.png"}],"google":[{"name":"Google Cloud Platform Security","ref":"https://cloud.google.com/security/","icon":"Generic-GCP.png"}],"ibm":[],"oracle":[{"name":"Oracle Cloud Guard","ref":"https://www.oracle.com/security/cloud-security/cloud-guard/","icon":"oracle.png"},{"name":"Oracle Cloud Advisor","ref":"https://blogs.oracle.com/cloud-infrastructure/now-available-oracle-cloud-advisor","icon":"oracle.png"}],"alibaba":[],"huawei":[{"name":"Cost Management","ref":"https://support.huaweicloud.com/intl/en-us/usermanual-cost/costcenter_0000001.html","icon":"costMgmt.png"}]},{"category":"Management Tools","subcategory":"Alerts and Remediation guidance Service","aws":[{"name":"AWS Personal Health Dashboard","ref":"https://aws.amazon.com/premiumsupport/technology/personal-health-dashboard/","icon":"Arch_AWS-Personal-Health-Dashboard_64.png"},{"name":"Amazon CloudWatch","ref":"https://aws.amazon.com/cloudwatch/","icon":"Arch_Amazon-CloudWatch_64.png"},{"name":"AWS Security Hub","ref":"https://aws.amazon.com/security-hub/","icon":"Arch_AWS-Security-Hub_64.png"},{"name":"AWS Audit Manager","ref":"https://aws.amazon.com/audit-manager/","icon":"Arch_AWS-Audit-Manager_64.png"}],"azure":[{"name":"Azure Monitor","ref":"https://docs.microsoft.com/azure/monitoring-and-diagnostics/monitoring-overview-azure-monitor","icon":"Azure monitor.png"},{"name":"Azure Operations Management Suite (OMS)","ref":"https://www.microsoft.com/cloud-platform/operations-management-suite","icon":"Azure OMS.png"}],"google":[],"ibm":[],"oracle":[{"name":"Oracle Management Cloud","ref":"https://cloud.oracle.com/en_US/management","icon":"oracle.png"},{"name":"Oracle Cloud Guard","ref":"https://www.oracle.com/security/cloud-security/cloud-guard/","icon":"oracle.png"},{"name":"Oracle Security Advisor","ref":"https://docs.oracle.com/en-us/iaas/Content/SecurityAdvisor/Concepts/securityadvisoroverview.htm","icon":"oracle.png"}],"alibaba":[{"name":"Cloud monitoring, Notification and Alerts","ref":"https://www.alibabacloud.com/product/cloud-monitor","icon":"CloudMonitor.png"}],"huawei":[]},{"category":"Management Tools","subcategory":"Cloud Management Tools","aws":[{"name":"AWS Command Line Interface","ref":"https://aws.amazon.com/cli/","icon":"Arch_AWS-Command-Line-Interface_64.png"},{"name":"AWS CloudShell","ref":"https://aws.amazon.com/cloudshell/","icon":"Arch_AWS-CloudShell_64.png"},{"name":"AWS Management Console","ref":"https://aws.amazon.com/console/","icon":"Arch_AWS-Management-Console_64.png"},{"name":"AWS Console Mobile Application","ref":"https://aws.amazon.com/console/mobile/","icon":"Arch_AWS-Console-Mobile-Application_64.png"},{"name":"AWS Tools & SDKs","ref":"https://aws.amazon.com/tools/","icon":"Arch_AWS-Tools-and-SDKs_64.png"}],"azure":[{"name":"Azure Command Line Interface","ref":null,"icon":"Microsoft Azure.png"},{"name":"Azure Powershell","ref":"https://docs.microsoft.com/powershell/azure/overview?view=azurermps-6.3.0","icon":"Microsoft Azure.png"},{"name":"Azure Management Console","ref":null,"icon":"Azure Management Portal.png"},{"name":"Azure Cloud Shell","ref":"https://azure.microsoft.com/features/cloud-shell/","icon":"Azure Management Portal.png"}],"google":[{"name":"Cloud Shell","ref":"https://cloud.google.com/shell/","icon":"Generic-GCP.png"},{"name":"Cloud Console","ref":"https://cloud.google.com/cloud-console/","icon":"Generic-GCP.png"},{"name":"Billing API","ref":"https://cloud.google.com/billing/docs/","icon":"Generic-GCP.png"},{"name":"Cloud APIs","ref":"https://cloud.google.com/apis/","icon":"Generic-GCP.png"}],"ibm":[{"name":"IBM Cloud CLI","ref":"https://www.ibm.com/cloud/cli","icon":"ibmcloud.png"},{"name":"IBM Cloud Shell","ref":"https://www.ibm.com/cloud/cloud-shell","icon":"ibmcloud.png"},{"name":"IBM Cloud Billing and Usage","ref":"https://cloud.ibm.com/docs/billing-usage","icon":"ibmcloud.png"},{"name":"IBM Cloud API & SDK","ref":"https://cloud.ibm.com/docs?tab=api-docs","icon":"ibmcloud.png"}],"oracle":[{"name":"OCI CLI","ref":"https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cliconcepts.htm","icon":"oracle.png"},{"name":"Oracle Cloud Shell","ref":"https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cloudshellintro.htm","icon":"oracle.png"},{"name":"Oracle Management Console","ref":null,"icon":"oracle.png"},{"name":"REST API","ref":"https://docs.oracle.com/en-us/iaas/api/","icon":"oracle.png"}],"alibaba":[{"name":"Alibaba Cloud CLI","ref":"https://www.alibabacloud.com/help/doc-detail/66653.htm","icon":"alibaba.png"}],"huawei":[{"name":"Open APIs","ref":"https://developer.huaweicloud.com/intl/en-us/openapilist","icon":"none.png"},{"name":"API Explorer","ref":"https://apiexplorer.developer.huaweicloud.com/apiexplorer/overview","icon":"none.png"},{"name":"HCloud CLI","ref":"https://support.huaweicloud.com/productdesc-hcli/hcli_01.html","icon":"hcloudcli.png"},{"name":"Terraform Explorer","ref":"https://terraform.developer.huaweicloud.com/terraform/overview","icon":"none.png"},{"name":"CloudShell","ref":"https://shell.huaweicloud.com/","icon":"none.png"}]},{"category":"Management Tools","subcategory":"Automated Infra Management Services","aws":[{"name":"AWS Managed Services","ref":"https://aws.amazon.com/managed-services/","icon":"aws.png"}],"azure":[],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Disaster Recovery Services","subcategory":"Automated Disaster Recovery Services","aws":[{"name":"AWS Disaster Recovery","ref":"https://aws.amazon.com/disaster-recovery/","icon":"aws.png"},{"name":"AWS Backup","ref":"https://aws.amazon.com/backint-agent/","icon":"Arch_AWS-Backint-Agent_64.png"}],"azure":[{"name":"Azure Site Recovery","ref":"https://azure.microsoft.com/services/site-recovery/","icon":"Azure Site Recovery.png"},{"name":"Azure Backup","ref":"https://azure.microsoft.com/services/backup/","icon":"Azure Backup.png"}],"google":[],"ibm":[],"oracle":[{"name":"Oracle Database Backup","ref":"https://cloud.oracle.com/en_US/database-backup/features","icon":"none.png"}],"alibaba":[{"name":"Alibaba Disaster Recovery","ref":"https://www.alibabacloud.com/solutions/hosting/Disaster-Recovery","icon":"alibaba.png"},{"name":"Hybrid Backup Recovery","ref":"https://www.alibabacloud.com/product/hbr","icon":"alibaba.png"}],"huawei":[]},{"category":"Security, Identity & Compliance","subcategory":"Identity & Access Management","aws":[{"name":"AWS Identity and Access Management (IAM)","ref":"https://aws.amazon.com/documentation/iam/","icon":"Security-Identity_AWSIAM.png"}],"azure":[{"name":"Azure Active Directory","ref":"https://azure.microsoft.com/services/active-directory/","icon":"Azure Active Directory.png"}],"google":[{"name":"Cloud IAM","ref":"https://cloud.google.com/iam/","icon":"Cloud-IAM.png"},{"name":"Cloud Identity-Aware Proxy","ref":"https://cloud.google.com/iap/","icon":"Cloud-Identity-Aware-Proxy.png"}],"ibm":[{"name":"Identity & Access Management","ref":"https://cloud.ibm.com/docs/iam?topic=iam-iamoverview","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Identity and Access Management (IAM)","ref":"https://www.oracle.com/security/identity-management/","icon":"oracle.png"},{"name":"Oracle Identity Cloud Service","ref":"https://www.oracle.com/security/cloud-security/identity-cloud/","icon":"oracle.png"}],"alibaba":[{"name":"Resource Access Management        ","ref":"https://www.alibabacloud.com/product/ram","icon":"ram.png"}],"huawei":[{"name":"Identity and Access Management","ref":"https://www.huaweicloud.com/intl/en-us/s/JUlBTSU","icon":"iam.png"}]},{"category":"Security, Identity & Compliance","subcategory":"Customer Identity and Access Management","aws":[{"name":"Amazon Cognito","ref":"https://aws.amazon.com/cognito/","icon":"Arch_Amazon-Cognito_64.png"}],"azure":[{"name":"Azure Active Directory B2C","ref":"https://azure.microsoft.com/en-us/services/active-directory/external-identities/b2c/","icon":"Azure SDK.png"}],"google":[{"name":"Firebase Authentication","ref":"https://firebase.google.com/docs/auth","icon":"Blue-Hexagon.png"},{"name":"Identity Platform","ref":"https://cloud.google.com/identity-platform","icon":"Cloud-IAM.png"}],"ibm":[{"name":"App ID","ref":"https://cloud.ibm.com/catalog/services/app-id#about","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Security, Identity & Compliance","subcategory":"Cloud Security Assesment Service","aws":[{"name":"Amazon Inspector","ref":"https://aws.amazon.com/inspector/","icon":"Security-Identity_AmazonInspector.png"},{"name":"Guard Duty","ref":"https://aws.amazon.com/guardduty/","icon":"Security-Identity_AmazonInspector.png"}],"azure":[{"name":"Azure Security Center","ref":"https://azure.microsoft.com/services/security-center/","icon":"Azure Security Center.png"}],"google":[],"ibm":[{"name":"Security and Compliance Center","ref":"https://cloud.ibm.com/docs/security-compliance?topic=security-compliance-getting-started","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Security Advisor","ref":"https://docs.oracle.com/en-us/iaas/Content/SecurityAdvisor/Concepts/securityadvisoroverview.htm","icon":"oracle.png"},{"name":"Oracle Cloud Guard","ref":"https://www.oracle.com/security/cloud-security/cloud-guard/","icon":"oracle.png"}],"alibaba":[],"huawei":[]},{"category":"Security, Identity & Compliance","subcategory":"Secured Socket Layer (SSL) Certificates","aws":[{"name":"AWS Certificate Manager","ref":"https://aws.amazon.com/certificate-manager/","icon":"Security-Identity_ACM_certificate-manager.png"}],"azure":[{"name":"App Service Certificate","ref":"https://azure.microsoft.com/updates/introducing-app-service-certificates/","icon":"Azure App Service.png"}],"google":[],"ibm":[{"name":"Secrets Manager","ref":"https://cloud.ibm.com/catalog/services/secrets-manager","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[{"name":"SSL Certificates","ref":"https://www.alibabacloud.com/product/certificates","icon":"SSL.png"}],"huawei":[{"name":"SSL Certificate Manager","ref":"https://www.huaweicloud.com/intl/en-us/product/scm.html","icon":"ssl.png"}]},{"category":"Security, Identity & Compliance","subcategory":"Hardware Based Security Module","aws":[{"name":"AWS CloudHSM","ref":"https://aws.amazon.com/cloudhsm/","icon":"Security-Identity_AWSCloudHSM.png"},{"name":"AWS Secrets Manager","ref":"https://aws.amazon.com/secrets-manager/","icon":"Security-Identity_AWSCloudHSM.png"}],"azure":[{"name":"Azure Key Vault","ref":"https://azure.microsoft.com/services/key-vault/","icon":"Azure Key Vault.png"}],"google":[{"name":"Cloud Key Management Service","ref":"https://cloud.google.com/kms/","icon":"Cloud-Platform-Security.png"}],"ibm":[{"name":"Key Protect","ref":"https://cloud.ibm.com/catalog/services/key-protect","icon":"ibmcloud.png"},{"name":"Cloud HSM","ref":"https://cloud.ibm.com/catalog/infrastructure/hardware-security-module","icon":"ibmcloud.png"},{"name":"Hyper Protect Crypto Services","ref":"https://cloud.ibm.com/catalog/services/hyper-protect-crypto-services","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Vault","ref":"https://www.oracle.com/security/cloud-security/key-management/","icon":"oracle.png"}],"alibaba":[{"name":"Key Management Service","ref":"https://www.alibabacloud.com/product/key-management-service","icon":"ram.png"}],"huawei":[]},{"category":"Security, Identity & Compliance","subcategory":"Directory Services","aws":[{"name":"AWS Directory Service","ref":"https://aws.amazon.com/directoryservice/","icon":"Security-Identity_AWSDirectoryService.png"}],"azure":[{"name":"Azure Active Directory","ref":"https://azure.microsoft.com/services/active-directory/","icon":"Azure Active Directory.png"},{"name":"Azure Active Directory B2C","ref":"https://azure.microsoft.com/services/active-directory-b2c/","icon":"Azure Active Directory.png"},{"name":"Azure Active Directory Domain Services","ref":"https://azure.microsoft.com/services/active-directory-ds/","icon":"Azure Active Directory.png"},{"name":"Azure Active Directory Multi Factor Authentication","ref":"https://azure.microsoft.com/services/multi-factor-authentication/","icon":"Azure Active Directory.png"}],"google":[{"name":"Cloud IAM","ref":"https://cloud.google.com/iam/","icon":"Cloud-IAM.png"},{"name":"Cloud Identity-Aware Proxy","ref":"https://cloud.google.com/iap/","icon":"Cloud-Identity-Aware-Proxy.png"},{"name":"Security Key Enforcement","ref":"https://cloud.google.com/security-key/","icon":"Generic-GCP.png"}],"ibm":[{"name":"App ID","ref":"https://cloud.ibm.com/catalog/services/app-id","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Directory Services","ref":"https://www.oracle.com/security/identity-management/directory-services/","icon":"oracle.png"}],"alibaba":[{"name":"Resource Access Management","ref":"https://www.alibabacloud.com/help/doc-detail/96239.htm","icon":"alibaba.png"}],"huawei":[]},{"category":"Security, Identity & Compliance","subcategory":"Key Management Services","aws":[{"name":"AWS Key Management Service","ref":null,"icon":"Security-Identity_AWSKMS.png"}],"azure":[{"name":"Azure Key Vault","ref":"https://azure.microsoft.com/services/key-vault/","icon":"Azure Key Vault.png"}],"google":[{"name":"Cloud Key Management Service","ref":"https://cloud.google.com/kms/","icon":"Cloud-Platform-Security.png"}],"ibm":[{"name":"Key Protect","ref":"https://cloud.ibm.com/catalog/services/key-protect","icon":"ibmcloud.png"},{"name":"Cloud HSM","ref":"https://cloud.ibm.com/catalog/infrastructure/hardware-security-module","icon":"ibmcloud.png"},{"name":"Hyper Protect Crypto Services","ref":"https://cloud.ibm.com/catalog/services/hyper-protect-crypto-services","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Vault","ref":"https://www.oracle.com/security/cloud-security/key-management/","icon":"oracle.png"}],"alibaba":[{"name":"Key Management Service ","ref":"https://www.alibabacloud.com/product/key-management-service","icon":"KMS.png"}],"huawei":[{"name":"Data Encryption Workshop","ref":"https://www.huaweicloud.com/intl/en-us/product/dew.html","icon":"dew.png"}]},{"category":"Security, Identity & Compliance","subcategory":"Consolidated Management of Multiple Cloud Accounts","aws":[{"name":"AWS Organizations","ref":"https://aws.amazon.com/organizations/","icon":"Arch_AWS-Organizations_64.png"},{"name":"AWS Control Tower","ref":"https://aws.amazon.com/controltower/","icon":"Arch_AWS-Control-Tower_64.png"},{"name":"AWS Resource Access Manager","ref":"https://aws.amazon.com/ram/","icon":"Arch_AWS-Resource-Access-Manager_64.png"}],"azure":[{"name":"Azure Management Groups","ref":"https://docs.microsoft.com/azure/azure-resource-manager/management-groups-overview","icon":"Azure Management Portal.png"}],"google":[],"ibm":[{"name":"Resource Group","ref":"https://cloud.ibm.com/docs/overview?topic=overview-whatis-rgs","icon":"ibmcloud.png"},{"name":"Enterprise","ref":"https://cloud.ibm.com/enterprise","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Security, Identity & Compliance","subcategory":"DDos Protection Service","aws":[{"name":"AWS Shield","ref":"https://aws.amazon.com/shield/","icon":"aws.png"}],"azure":[{"name":"Azure DDoS Protection","ref":"https://azure.microsoft.com/services/ddos-protection/","icon":"Microsoft Azure.png"}],"google":[{"name":"Cloud Armor (Beta)","ref":"https://cloud.google.com/armor/","icon":"Google-Cloud-Platform.png"}],"ibm":[{"name":"Internet Services","ref":"https://cloud.ibm.com/docs/infrastructure/cis?topic=cis-about-ibm-cloud-internet-services-cis","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle DDoS Protection","ref":"https://docs.oracle.com/en-us/iaas/Content/EdgeServices/overview.htm","icon":"none.png"}],"alibaba":[{"name":"DDOS Pro and Basic","ref":"https://www.alibabacloud.com/product/ddos-pro","icon":"ddos.png"}],"huawei":[{"name":"Advanced Anti-DDoS","ref":"https://www.huaweicloud.com/intl/en-us/product/aad.html","icon":"Anti-DDoS.png"}]},{"category":"Security, Identity & Compliance","subcategory":"Web Application Firewall","aws":[{"name":"AWS WAF","ref":"https://aws.amazon.com/waf/","icon":"Security-Identity_AWSWAF.png"}],"azure":[{"name":"Azure WAF","ref":null,"icon":"Firewall.png"}],"google":[],"ibm":[{"name":"Internet Services","ref":"https://cloud.ibm.com/docs/infrastructure/cis?topic=cis-about-ibm-cloud-internet-services-cis","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Web Application Firewall","ref":"https://www.oracle.com/cloud/security/cloud-services/web-application-firewall.html","icon":"none.png"}],"alibaba":[{"name":"Web Application Firewall","ref":"https://www.alibabacloud.com/product/waf","icon":"waf.png"}],"huawei":[{"name":"Web Application Firewall","ref":"https://www.huaweicloud.com/intl/en-us/product/waf.html","icon":"waf.png"}]},{"category":"Security, Identity & Compliance","subcategory":"Security & Compliance Service","aws":[{"name":"AWS Firewall Manager","ref":"https://aws.amazon.com/firewall-manager/","icon":"Arch_AWS-Firewall-Manager_64.png"},{"name":"AWS Network Firewall","ref":"https://aws.amazon.com/network-firewall/","icon":"Arch_AWS-Network-Firewall_64.png"}],"azure":[{"name":"Azure Firewall Manager","ref":"https://azure.microsoft.com/services/firewall-manager/","icon":"none.png"}],"google":[],"ibm":[{"name":"Security and Compliance Center","ref":"https://cloud.ibm.com/docs/security-compliance?topic=security-compliance-getting-started","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[],"huawei":[{"name":"Security Compliance","ref":"https://www.huaweicloud.com/intl/en-us/securecenter/safetycompliance.html","icon":"none.png"}]},{"category":"Security, Identity & Compliance","subcategory":"Security & Compliance Service","aws":[{"name":"AWS Artifact","ref":"https://aws.amazon.com/artifact/","icon":"aws.png"}],"azure":[{"name":"Azure Security & Compliance","ref":"https://azure.microsoft.com/support/trust-center/","icon":"Azure Security Center.png"}],"google":[{"name":"Cloud Security Command Center (Alpha)","ref":"https://cloud.google.com/security-command-center/","icon":"Google-Cloud-Platform.png"}],"ibm":[{"name":"Security and Compliance Center","ref":"https://cloud.ibm.com/docs/security-compliance?topic=security-compliance-getting-started","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Compliance Documents","ref":"https://docs.oracle.com/en-us/iaas/Content/ComplianceDocuments/Concepts/compliancedocsoverview.htm","icon":"none.png"}],"alibaba":[{"name":"Alibaba Truster Center ","ref":"https://www.alibabacloud.com/trust-center","icon":"alibaba.png"}],"huawei":[]},{"category":"Security, Identity & Compliance","subcategory":"Sensitive Data discovery and protection","aws":[{"name":"Amazon Macie","ref":"https://aws.amazon.com/macie/","icon":"Arch_Amazon-Macie_64.png"}],"azure":[],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[{"name":"Data Security Center","ref":"https://www.huaweicloud.com/intl/en-us/product/dsc.html","icon":"DSC.png"}]},{"category":"Big Data & Advanced Analytics","subcategory":"Big Data Query as a Service","aws":[{"name":"Amazon Athena","ref":"https://aws.amazon.com/athena/","icon":"aws.png"},{"name":"AWS Lake Formation","ref":"https://aws.amazon.com/lake-formation/","icon":"Arch_AWS-Lake-Formation_64.png"},{"name":"Amazon HealthLake (Preview)","ref":"https://aws.amazon.com/healthlake/","icon":"Arch_Amazon-HealthLake_64.png"}],"azure":[{"name":"Azure Data Lake Analytics","ref":"https://azure.microsoft.com/services/data-lake-analytics/","icon":"Azure Data Lake Analytics.png"}],"google":[{"name":"BigQuery","ref":"https://cloud.google.com/bigquery/","icon":"BigQuery.png"}],"ibm":[{"name":"SQL Query","ref":"https://cloud.ibm.com/docs/services/sql-query?topic=sql-query-overview","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Big Data SQL Cloud Service","ref":"https://www.oracle.com/big-data/big-data-sql/","icon":"oracle.png"}],"alibaba":[{"name":"E-MapReduce Service","ref":"https://www.alibabacloud.com/product/e-mapreduce","icon":"emr.png"}],"huawei":[{"name":"Data Lake Insight","ref":"https://www.huaweicloud.com/intl/en-us/product/dli.html","icon":"none.png"}]},{"category":"Big Data & Advanced Analytics","subcategory":"Big Data Managed Cluster as a Service","aws":[{"name":"Amazon EMR","ref":"https://aws.amazon.com/emr/","icon":"Analytics_AmazonEMR.png"}],"azure":[{"name":"Azure HDInsight","ref":"https://azure.microsoft.com/services/hdinsight/","icon":"Azure HDInsight.png"}],"google":[{"name":"Cloud DataProc","ref":"https://cloud.google.com/dataproc/","icon":"Cloud-Dataproc.png"}],"ibm":[{"name":"Analytics Engine","ref":"https://cloud.ibm.com/docs/services/AnalyticsEngine?topic=AnalyticsEngine-IAE-overview","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Big Data Service","ref":"https://www.oracle.com/big-data/big-data-service/","icon":"bigdata.png"}],"alibaba":[{"name":"E-MapReduce Service","ref":"https://www.alibabacloud.com/product/e-mapreduce","icon":"emr.png"}],"huawei":[{"name":"MapReduce Service","ref":"https://www.huaweicloud.com/intl/en-us/product/mrs.html","icon":"none.png"}]},{"category":"Big Data & Advanced Analytics","subcategory":"Cloud Search","aws":[{"name":"Amazon CloudSearch","ref":"https://aws.amazon.com/cloudsearch/","icon":"Application-Services_AmazonCloudSearch.png"},{"name":"Amazon Elastic Search Service","ref":"https://aws.amazon.com/cloudsearch/","icon":"Application-Services_AmazonCloudSearch.png"}],"azure":[{"name":"Azure Search","ref":null,"icon":"Azure Search.png"}],"google":[],"ibm":[{"name":"Databases for Elasticsearch","ref":"https://cloud.ibm.com/catalog/services/databases-for-elasticsearch","icon":"elasticsearch.svg"}],"oracle":[],"alibaba":[],"huawei":[{"name":"Cloud Search Service","ref":"https://www.huaweicloud.com/intl/en-us/product/es.html","icon":"none.png"}]},{"category":"Big Data & Advanced Analytics","subcategory":"Streaming Service","aws":[{"name":"Amazon Kinesis","ref":"https://aws.amazon.com/kinesis/streams/","icon":"Analytics_AmazonKinesis.png"},{"name":"Amazon Kinesis Video Streams","ref":"https://aws.amazon.com/blogs/aws/amazon-kinesis-video-streams-serverless-video-ingestion-and-storage-for-vision-enabled-apps/","icon":"Analytics_AmazonKinesis.png"}],"azure":[{"name":"Azure Stream Analytics","ref":"https://azure.microsoft.com/services/stream-analytics/","icon":"Azure Stream Analytics.png"},{"name":"Azure Event Hub","ref":"https://azure.microsoft.com/services/stream-analytics/","icon":"Azure Event Hubs.png"}],"google":[{"name":"Cloud Dataflow","ref":"https://cloud.google.com/dataflow/","icon":"Cloud-Dataflow.png"}],"ibm":[{"name":"Streaming Analytics","ref":"https://cloud.ibm.com/docs/services/StreamingAnalytics?topic=StreamingAnalytics-gettingstarted","icon":"ibmcloud.png"},{"name":"Event Streams","ref":"https://cloud.ibm.com/catalog/services/event-streams","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Streaming","ref":"https://www.oracle.com/cloud-native/streaming/","icon":"storage.png"}],"alibaba":[],"huawei":[{"name":"Data Lake Insight [Previous: Cloud Stream Service]","ref":"https://www.huaweicloud.com/intl/en-us/product/dli.html","icon":"none.png"}]},{"category":"Big Data & Advanced Analytics","subcategory":"Data Warehouse","aws":[{"name":"Amazon Redshift","ref":"https://aws.amazon.com/redshift/","icon":"Database_AmazonRedshift.png"}],"azure":[{"name":"Azure SQL Data Warehouse","ref":"https://azure.microsoft.com/services/sql-data-warehouse/","icon":"Azure Data Warehouse.png"}],"google":[{"name":"BigQuery","ref":"https://cloud.google.com/bigquery/","icon":"BigQuery.png"}],"ibm":[{"name":"Db2 Warehouse","ref":"https://cloud.ibm.com/catalog/services/db2-warehouse","icon":"WoC_thicker_logo_10_23.svg"},{"name":"Netezza Performance Server","ref":"https://cloud.ibm.com/nzsaas/create","icon":"NetezzaPerformanceServer.svg"}],"oracle":[{"name":"Oracle Autonomous Data Warehouse","ref":"https://www.oracle.com/autonomous-database/autonomous-data-warehouse/","icon":"oracle.png"}],"alibaba":[{"name":"Alibaba MaxCompute ODPS","ref":"https://www.alibabacloud.com/product/maxcompute","icon":"MaxCompute.png"}],"huawei":[{"name":"Data Warehouse Service","ref":"https://www.huaweicloud.com/intl/en-us/product/dws.html","icon":"dws.png"}]},{"category":"Big Data & Advanced Analytics","subcategory":"Business Intelligence & Data Visualization","aws":[{"name":"Amazon QuickSight","ref":"https://quicksight.aws/","icon":"Analytics_AmazonQuickSight.png"}],"azure":[{"name":"PowerBI","ref":"https://powerbi.microsoft.com/","icon":"Power BI Embedded.png"}],"google":[{"name":"Google Data Studio","ref":"https://cloud.google.com/data-studio/","icon":"Data-Studio.png"},{"name":"Looker","ref":"https://cloud.google.com/looker","icon":"none.png"}],"ibm":[{"name":"Watson studio","ref":"https://dataplatform.cloud.ibm.com/docs/content/?context=wdp","icon":"ibmcloud.png"},{"name":"Watson Query","ref":"https://cloud.ibm.com/catalog/services/watson-query","icon":"data-virtualization.svg"}],"oracle":[{"name":"Oracle Analytics Cloud","ref":"https://www.oracle.com/business-analytics/analytics-cloud.html","icon":"oracle.png"},{"name":"Oracle Data Visualization Cloud Service","ref":"https://docs.oracle.com/en/cloud/paas/data-visualization-cloud/index.html","icon":"oracle.png"},{"name":"Oracle Business Intelligence Cloud Service","ref":"https://docs.oracle.com/en/cloud/paas/bi-cloud/index.html","icon":"oracle.png"}],"alibaba":[{"name":"Data IDE","ref":"https://www.alibabacloud.com/product/ide","icon":"IDE.png"}],"huawei":[{"name":"Data Lake Visulization","ref":"https://www.huaweicloud.com/intl/en-us/product/dlv.html","icon":"none.png"}]},{"category":"Big Data & Advanced Analytics","subcategory":"Cloud ETL","aws":[{"name":"AWS Data Pipeline","ref":"https://aws.amazon.com/datapipeline/","icon":"Analytics_AWSDataPipeline.png"},{"name":"AWS Glue","ref":"https://aws.amazon.com/glue/","icon":"aws.png"},{"name":"Amazon Simple Workflow Service (SWF)","ref":"https://aws.amazon.com/swf/","icon":"aws.png"}],"azure":[{"name":"Azure Data Factory","ref":"https://azure.microsoft.com/services/data-factory/","icon":"Azure Data Factory.png"},{"name":"Azure Data Catalog","ref":"https://azure.microsoft.com/services/data-catalog/","icon":"Azure Data Catalog.png"},{"name":"Logic Apps","ref":"https://azure.microsoft.com/services/logic-apps/","icon":"Azure App Service - Logic App.png"}],"google":[{"name":"Cloud DataPrep","ref":"https://cloud.google.com/dataprep/","icon":"Cloud-Dataprep.png"},{"name":"Cloud Data Fusion","ref":"https://cloud.google.com/data-fusion/","icon":"none.png"},{"name":"Cloud Composer","ref":"https://cloud.google.com/composer/","icon":"Cloud-Dataprep.png"}],"ibm":[{"name":"DataStage","ref":"https://www.ibm.com/us-en/marketplace/datastage","icon":"ibmcloud.png"},{"name":"Watson Knowledge Catalog","ref":"https://www.ibm.com/cloud/watson-knowledge-catalog","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Data Flow","ref":"https://www.oracle.com/big-data/data-flow/","icon":"integration.png"},{"name":"Oracle Integration","ref":"https://docs.oracle.com/en/cloud/paas/integration-cloud/index.html","icon":"integration.png"},{"name":"Data Integrator","ref":"https://cloud.oracle.com/en_US/data-integrator","icon":"integration.png"}],"alibaba":[{"name":"DataWorks","ref":"https://www.alibabacloud.com/product/ide","icon":"alibaba.png"},{"name":"Data Integration","ref":"https://www.alibabacloud.com/product/data-integration","icon":"alibaba.png"}],"huawei":[{"name":"Data Lake Governance Center","ref":"https://www.huaweicloud.com/intl/en-us/product/dayu.html","icon":"none.png"}]},{"category":"Big Data & Advanced Analytics","subcategory":"Third party data exchange","aws":[{"name":"AWS Data Exchange","ref":"https://aws.amazon.com/data-exchange/","icon":"Arch_AWS-Data-Exchange_64.png"}],"azure":[{"name":"Azure Data Share","ref":"https://docs.microsoft.com/azure/data-share/","icon":"none.png"}],"google":[{"name":"Analytics Hub (Preview)","ref":"https://cloud.google.com/analytics-hub","icon":"none.png"}],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Big Data & Advanced Analytics","subcategory":"Data Analytics platform","aws":[],"azure":[{"name":"Azure Databricks","ref":"https://azure.microsoft.com/en-us/products/databricks/#overview","icon":"Microsoft Azure.png"}],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Artificial Intelligence / Machine Learning","subcategory":"Language Processing AI","aws":[{"name":"Amazon Lex","ref":"https://aws.amazon.com/lex/","icon":"aws.png"},{"name":"Amazon Comprehend","ref":"https://aws.amazon.com/comprehend/","icon":"aws.png"}],"azure":[{"name":"LUIS (Language Understanding Intelligent Service)","ref":"https://azure.microsoft.com/services/cognitive-services/language-understanding-intelligent-service/","icon":"Azure Cognative Services - luis_COLOR.png"},{"name":"Azure Bot Service","ref":"https://azure.microsoft.com/services/bot-service/","icon":"Azure Cognative Services - Speech_COLOR.png"},{"name":"Azure Text Analytics","ref":"https://docs.microsoft.com/azure/cognitive-services/language-service/","icon":"Azure Machine Learning.png"}],"google":[{"name":"Natural Language API","ref":"https://cloud.google.com/natural-language/","icon":"Natural-Language-API.png"},{"name":"Cloud Text-to-Speech (Beta)","ref":"https://cloud.google.com/text-to-speech/","icon":"Natural-Language-API.png"},{"name":"DialogFlow Enterprise Edition (Beta)","ref":"https://cloud.google.com/dialogflow-enterprise/","icon":"Natural-Language-API.png"}],"ibm":[{"name":"Natural Language Classifier","ref":"https://cloud.ibm.com/docs/services/natural-language-classifier?topic=natural-language-classifier-natural-language-classifier","icon":"ibmcloud.png"},{"name":"Language Translator","ref":"https://cloud.ibm.com/docs/services/language-translator?topic=language-translator-gettingstarted","icon":"ibmcloud.png"},{"name":"Watson Assistant","ref":"https://cloud.ibm.com/docs/services/assistant?topic=assistant-getting-started","icon":"ibmcloud.png"},{"name":"Watson Discovery","ref":"https://cloud.ibm.com/docs/services/discovery?topic=discovery-getting-started","icon":"ibmcloud.png"},{"name":"Watson Knowledge Studio","ref":"https://cloud.ibm.com/docs/services/watson-knowledge-studio?topic=watson-knowledge-studio-wks_tutintro","icon":"ibmcloud.png"},{"name":" Text to Speech","ref":"https://cloud.ibm.com/docs/services/text-to-speech?topic=text-to-speech-gettingStarted","icon":"ibmcloud.png"},{"name":"Personality Insights","ref":"https://cloud.ibm.com/docs/services/personality-insights?topic=personality-insights-gettingStarted","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[],"huawei":[{"name":"Conversation Bot Service","ref":"https://www.huaweicloud.com/intl/en-us/product/cbsqa.html","icon":"cbsqa.png"},{"name":"Natural Language Processing","ref":"https://www.huaweicloud.com/product/nlplu.html","icon":"nlp.png"},{"name":"Text to Speech","ref":"https://www.huaweicloud.com/product/tts.html","icon":"tts.png"},{"name":"Machine Translation Service","ref":"https://www.huaweicloud.com/product/nlpmt.html","icon":"mts.png"},{"name":"Knowledge Graph","ref":"https://www.huaweicloud.com/product/nlpkg.html","icon":"none.png"}]},{"category":"Artificial Intelligence","subcategory":"Speech Recognition AI","aws":[{"name":"Amazon Polly","ref":null,"icon":"aws.png"},{"name":"Amazon Transcribe","ref":"https://aws.amazon.com/transcribe/","icon":"aws.png"},{"name":"Amazon Translate","ref":"https://aws.amazon.com/translate/","icon":"aws.png"}],"azure":[{"name":"Speaker Recognition","ref":"https://docs.microsoft.com/azure/cognitive-services/speech-service/speaker-recognition-overview","icon":"Azure Cognative Services - Speech_COLOR.png"},{"name":"Speech To Text","ref":"https://docs.microsoft.com/azure/cognitive-services/speech-service/index-speech-to-text","icon":"Azure Cognative Services - Speech_COLOR.png"},{"name":"Speech Translation","ref":"https://docs.microsoft.com/azure/cognitive-services/speech-service/index-speech-translation","icon":"Azure Cognative Services - Speech_COLOR.png"}],"google":[{"name":"Translation API","ref":"https://cloud.google.com/translate/","icon":"Speech-API.png"},{"name":"Speech API","ref":"https://cloud.google.com/speech/","icon":"Speech-API.png"}],"ibm":[{"name":"Speech to Text","ref":"https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-gettingStarted","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[],"huawei":[{"name":"ASR","ref":"https://www.huaweicloud.com/intl/en-us/product/asr.html","icon":"asr.png"},{"name":"Real-time ASR","ref":"https://www.huaweicloud.com/product/rasr.html","icon":"rasr.png"},{"name":"ASR Customization","ref":"https://www.huaweicloud.com/intl/en-us/product/asrc.html","icon":"none.png"}]},{"category":"Artificial Intelligence","subcategory":"Image Recognition AI","aws":[{"name":"Amazon Rekognition","ref":null,"icon":"aws.png"}],"azure":[{"name":"Emotion API","ref":"https://azure.microsoft.com/services/cognitive-services/emotion/","icon":"Azure Cognative Services - emotion_COLOR.png"},{"name":"Face API","ref":"https://azure.microsoft.com/services/cognitive-services/face/","icon":"Azure Cognative Services - emotion_COLOR.png"},{"name":"Computer Vision","ref":"https://docs.microsoft.com/azure/cognitive-services/computer-vision/","icon":"Azure Cognative Services - emotion_COLOR.png"}],"google":[{"name":"Vision API","ref":null,"icon":"Vision-API.png"},{"name":"Cloud Video Intelligence","ref":"https://cloud.google.com/video-intelligence/","icon":"Vision-API.png"}],"ibm":[{"name":"Visual Recognition","ref":"https://cloud.ibm.com/docs/services/visual-recognition?topic=visual-recognition-index","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[{"name":"Image Search","ref":"https://www.alibabacloud.com/product/imagesearch","icon":"alibaba.png"}],"huawei":[{"name":"Image Recognition","ref":"https://www.huaweicloud.com/intl/en-us/product/image.html","icon":"image.png"},{"name":"Image Search","ref":"https://www.huaweicloud.com/intl/en-us/product/imagesearch.html","icon":"imageSearch.png"},{"name":"Image Tagging","ref":"https://www.huaweicloud.com/product/imagetagging.html","icon":"imageTagging.png"},{"name":"Video Content Tagging","ref":"https://www.huaweicloud.com/product/vct.html","icon":"vct.png"},{"name":"Video Ingestion Service","ref":"https://www.huaweicloud.com/product/vis.html","icon":"vis.png"},{"name":"Content Moderation","ref":"https://www.huaweicloud.com/intl/en-us/product/moderation.html","icon":"moderation.png"},{"name":"Celebrity Recognition","ref":"https://www.huaweicloud.com/product/roc.html","icon":"roc.png"}]},{"category":"Artificial Intelligence","subcategory":"Machine Learning","aws":[{"name":"Amazon Machine Learning","ref":null,"icon":"Analytics_AmazonMachineLearning.png"},{"name":"Amazon Sage​Maker","ref":"https://aws.amazon.com/sagemaker/","icon":"Analytics_AmazonMachineLearning.png"},{"name":"AWS Neuron","ref":"https://aws.amazon.com/machine-learning/neuron/","icon":"Arch_AWS-Neuron_64.png"}],"azure":[{"name":"Azure Machine Learning","ref":"https://studio.azureml.net/","icon":"Azure Machine Learning.png"},{"name":"Azure Machine Learning Workbench","ref":"https://docs.microsoft.com/azure/machine-learning/preview/quickstart-installation","icon":"Azure Machine Learning.png"},{"name":"Azure Machine Learning Model Management","ref":"https://docs.microsoft.com/azure/machine-learning/preview/model-management-overview","icon":"Azure Machine Learning.png"}],"google":[{"name":"Cloud DataLab","ref":"https://cloud.google.com/datalab/","icon":"Cloud-Datalab.png"},{"name":"Cloud AutoML","ref":"https://cloud.google.com/automl/","icon":"Cloud-Datalab.png"},{"name":"Vertex AI","ref":"https://cloud.google.com/vertex-ai","icon":"Cloud-Machine-Learning.png"}],"ibm":[{"name":"Machine Learning","ref":"https://dataplatform.cloud.ibm.com/docs/content/wsj/analyze-data/ml-overview.html","icon":"ibmcloud.png"},{"name":"Watson OpenScale","ref":"https://cloud.ibm.com/catalog/services/watson-openscale","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Machine Learning","ref":"https://www.oracle.com/data-science/machine-learning/","icon":"oracle.png"}],"alibaba":[{"name":"Machine Learning Platform For AI","ref":"https://www.alibabacloud.com/product/machine-learning","icon":"none.png"}],"huawei":[{"name":"ModelArts","ref":"https://www.huaweicloud.com/intl/en-us/product/modelarts.html","icon":"ModelArts.png"}]},{"category":"Artificial Intelligence / Machine Learning","subcategory":"Machine Learning Frameworks","aws":[{"name":"TensorFlow on AWS","ref":"https://aws.amazon.com/tensorflow/","icon":"Arch_TensorFlow-on-AWS_64.png"},{"name":"PyTorch on AWS","ref":"https://aws.amazon.com/pytorch/","icon":"Arch_TorchServe_64.png"},{"name":"Apache MXNet on AWS","ref":"https://aws.amazon.com/mxnet/","icon":"Arch_Apache-MXNet-on-AWS_64.png"}],"azure":[],"google":[{"name":"Vertex AI (TensorFlow, PyTorch, XGBoost, Scikit-Learn)","ref":"https://cloud.google.com/vertex-ai","icon":"none.png"}],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Artificial Intelligence / Machine Learning","subcategory":"Business analysis","aws":[{"name":"Amazon Forecast","ref":"https://aws.amazon.com/forecast/","icon":"Arch_Amazon-Forecast_64.png"},{"name":"Amazon Fraud Detector","ref":"https://aws.amazon.com/fraud-detector/","icon":"Arch_Amazon-Fraud-Detector_64.png"},{"name":"Amazon Lookout for Metrics","ref":"https://aws.amazon.com/lookout-for-metrics/","icon":"Arch_Amazon-Lookout-for-Metrics_64.png"},{"name":"Amazon Augmented AI (Amazon A2I)","ref":"https://aws.amazon.com/augmented-ai/","icon":"Arch_Amazon-Augmented-AI-A2I_64.png"},{"name":"Amazon Personalize","ref":"https://aws.amazon.com/personalize/","icon":"Arch_Amazon-Personalize_64.png"}],"azure":[{"name":"Azure Analysis Service","ref":"https://docs.microsoft.com/azure/analysis-services/","icon":"Azure Machine Learning.png"},{"name":"Azure Metrics Advisor","ref":"https://docs.microsoft.com/azure/analysis-services/","icon":"Azure Cognitive Services.png"},{"name":"Personalize","ref":"https://azure.microsoft.com/services/cognitive-services/personalizer/","icon":"Azure Machine Learning.png"}],"google":[{"name":"Vertex AI (TensorFlow, PyTorch, XGBoost, Scikit-Learn)","ref":"https://cloud.google.com/vertex-ai","icon":"none.png"}],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Artificial Intelligence / Machine Learning","subcategory":"Machine Learning Inference","aws":[{"name":"Amazon Elastic Inference","ref":"https://aws.amazon.com/machine-learning/elastic-inference/","icon":"Arch_Amazon-Elastic-Inference_64.png"}],"azure":[],"google":[{"name":"Vertex AI Predictions","ref":"https://cloud.google.com/vertex-ai","icon":"none.png"}],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Artificial Intelligence / Machine Learning","subcategory":"Intelligent Search / Search with ML","aws":[{"name":"Amazon Kendra","ref":"https://aws.amazon.com/kendra/","icon":"Arch_Amazon-Kendra_64.png"}],"azure":[{"name":"Azure Cognitive Search","ref":"https://docs.microsoft.com/azure/search/","icon":"Azure Cognitive Services.png"}],"google":[{"name":"Vertex Matching Engine","ref":"https://cloud.google.com/vertex-ai/docs/matching-engine","icon":"none.png"}],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Mobile Services","subcategory":"Mobile App Development Services","aws":[{"name":"AWS Mobile Hub","ref":null,"icon":"Mobile-Services_AWSMobileHub.png"}],"azure":[{"name":"Azure Mobile Apps","ref":"https://azure.microsoft.com/services/app-service/mobile/","icon":"Azure App Service - Mobile App (was Mobile Services).png"}],"google":[{"name":"Cloud Mobile App","ref":null,"icon":"Generic-GCP.png"}],"ibm":[],"oracle":[{"name":"Mobile & Chatbots","ref":"https://cloud.oracle.com/en_US/mobile/features","icon":"oracle.png"},{"name":"Mobile Hub","ref":"https://www.oracle.com/application-development/cloud-services/mobile/","icon":"oracle.png"}],"alibaba":[],"huawei":[{"name":"ServiceStage-MBaaS","ref":"https://www.huaweicloud.com/intl/en-us/product/servicestage.html","icon":"none.png"}]},{"category":"Mobile Services","subcategory":"Web API Management Service","aws":[{"name":"Amazon API Gateway","ref":"https://aws.amazon.com/api-gateway/","icon":"Application-Services_AmazonAPIGateway.png"}],"azure":[{"name":"Azure API Management","ref":null,"icon":"Azure API Management.png"}],"google":[{"name":"Cloud Endpoints","ref":null,"icon":"Cloud-Endpoints.png"}],"ibm":[{"name":"API Connect","ref":"https://cloud.ibm.com/docs/services/apiconnect?topic=apiconnect-getting-started","icon":"ibmcloud.png"}],"oracle":[{"name":"API Platform","ref":"https://www.oracle.com/integration/api-platform/","icon":"APIManager.png"},{"name":"Apiary","ref":"https://docs.oracle.com/cloud/apiary/index.html","icon":"oracle.png"}],"alibaba":[{"name":"API Gateway","ref":"https://www.alibabacloud.com/product/api-gateway","icon":"API.png"}],"huawei":[{"name":"API Gateway","ref":"https://www.huaweicloud.com/intl/en-us/product/apig.html","icon":"apig.png"}]},{"category":"Mobile Services","subcategory":"Consolidated Mgmt of Multiple Cloud Accounts","aws":[{"name":"Amazon Pinpoint","ref":null,"icon":"aws.png"}],"azure":[{"name":"Azure Mobile Engagement","ref":null,"icon":"Azure Mobile Engagement.png"}],"google":[],"ibm":[],"oracle":[{"name":"Mobile Cloud Service","ref":"https://cloud.oracle.com/mobile","icon":"mobile.png"}],"alibaba":[],"huawei":[{"name":"ServiceStage-MBaaS","ref":"https://www.huaweicloud.com/intl/en-us/product/servicestage.html","icon":"none.png"}]},{"category":"Automated Cloud Management Service","subcategory":"Managed Cloud Services","aws":[{"name":"AWS Managed Services","ref":"https://aws.amazon.com/managed-services/","icon":"Application-Services_AmazonAppStream.png"},{"name":"AWS Cloud Map","ref":"https://aws.amazon.com/cloud-map/","icon":"Arch_AWS-Cloud-Map_64.png"}],"azure":[],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Mobile Services","subcategory":"Mobile App Testing Service","aws":[{"name":"AWS Device Farm","ref":null,"icon":"Mobile-Services_AWSDeviceFarm.png"}],"azure":[{"name":"App Center Test","ref":"https://appcenter.ms/","icon":"xamarin.png"}],"google":[{"name":"Cloud Test Lab","ref":"https://firebase.google.com/docs/test-lab/","icon":"Generic-GCP.png"}],"ibm":[],"oracle":[],"alibaba":[],"huawei":[{"name":"MobileTest","ref":"https://www.huaweicloud.com/product/mobileapptest.html","icon":"MobileTest.png"}]},{"category":"Mobile Services","subcategory":"Mobile App Software Development Toolkit","aws":[{"name":"AWS Mobile SDK","ref":null,"icon":"SDKs_Android.png"}],"azure":[{"name":"Azure Mobile SDK","ref":null,"icon":"Azure SDK.png"}],"google":[{"name":"Cloud Tools for Android Studio","ref":"https://cloud.google.com/android-studio/","icon":"Blue-Hexagon.png"}],"ibm":[],"oracle":[{"name":"Oracle Visual Builder","ref":"https://www.oracle.com/application-development/visual-builder/","icon":"oracle.png"}],"alibaba":[],"huawei":[]},{"category":"Mobile Services","subcategory":"Application Services","aws":[{"name":"AWS Step Functions","ref":"https://aws.amazon.com/step-functions/","icon":"Arch_AWS-Step-Functions_64.png"},{"name":"Amazon EventBridge","ref":"https://aws.amazon.com/eventbridge/","icon":"Arch_Amazon-EventBridge_64.png"},{"name":"Amazon AppFlow","ref":"https://aws.amazon.com/appflow/","icon":"Arch_Amazon-AppFlow_64.png"},{"name":"Amazon Managed Workflows for Apache Airflow (MWAA)","ref":"https://aws.amazon.com/managed-workflows-for-apache-airflow/","icon":"Arch_Amazon-Managed-Workflows-for-Apache-Airflow_64.png"}],"azure":[{"name":"Microsoft Flow","ref":"https://flow.microsoft.com/","icon":"Microsoft Flow.png"},{"name":"Logic Apps","ref":"https://azure.microsoft.com/services/logic-apps/","icon":"Azure App Service - Logic App.png"},{"name":"Azure Functions","ref":"https://azure.microsoft.com/services/functions/","icon":"Azure Functions.png"},{"name":"Event Grid","ref":"https://azure.microsoft.com/services/event-grid/","icon":"Azure Event Grid.png"},{"name":"Azure App Service WebJobs","ref":null,"icon":"Azure WebApp - WebJobs.png"}],"google":[{"name":"Workflows","ref":"https://cloud.google.com/workflows","icon":"workflows.png"},{"name":"EventArc","ref":"https://cloud.google.com/eventarc","icon":"Eventarc.png"}],"ibm":[{"name":"IBM Cloud Functions","ref":"https://www.ibm.com/cloud/functions","icon":"ibm-cloud-functions.png"},{"name":"IBM Cloud Code Engine","ref":"https://cloud.ibm.com/codeengine","icon":"codeEngineBright.svg"}],"oracle":[{"name":"Oracle Application Express (APEX)","ref":"https://www.oracle.com/application-development/apex/","icon":"oracle.png"},{"name":"Oracle Visual Builder","ref":"https://www.oracle.com/application-development/visual-builder/","icon":"oracle.png"},{"name":"Oracle Visual Builder Studio","ref":"https://www.oracle.com/application-development/visual-builder-studio/","icon":"oracle.png"}],"alibaba":[],"huawei":[]},{"category":"Mobile Services","subcategory":"Mobile App Analytics","aws":[{"name":"Amazon Pinpoint","ref":"https://aws.amazon.com/pinpoint/","icon":"aws.png"}],"azure":[{"name":"Visual Studio App Center","ref":"https://azure.microsoft.com/en-us/services/app-center/","icon":"Microsoft Flow.png"}],"google":[{"name":"Firebase Analytics","ref":"https://firebase.google.com/docs/analytics/","icon":"Blue-Hexagon.png"}],"ibm":[],"oracle":[{"name":"Mobile Cloud Service","ref":"https://cloud.oracle.com/mobile","icon":"mobile.png"}],"alibaba":[],"huawei":[{"name":"ServiceStage-MBaaS","ref":"https://www.huaweicloud.com/intl/en-us/product/servicestage.html","icon":"none.png"}]},{"category":"Application Services","subcategory":"API Management Service","aws":[{"name":"Amazon API Gateway","ref":null,"icon":"Application-Services_AmazonAPIGateway.png"}],"azure":[{"name":"Azure API Management","ref":null,"icon":"Azure API Management.png"}],"google":[{"name":"Apigee API Platform","ref":"https://cloud.google.com/apigee-api-management/","icon":"Blue-Hexagon.png"},{"name":"API Monitization","ref":"https://cloud.google.com/api-monetization/","icon":"Blue-Hexagon.png"},{"name":"API Analytics","ref":"https://cloud.google.com/api-analytics/","icon":"Blue-Hexagon.png"},{"name":"Apigee Sense","ref":"https://cloud.google.com/apigee-sense/","icon":"Blue-Hexagon.png"},{"name":"Cloud Endpoints","ref":"https://cloud.google.com/endpoints/","icon":"Blue-Hexagon.png"}],"ibm":[{"name":"API connect","ref":"https://cloud.ibm.com/docs/services/AppConnect?topic=AppConnect-concepts#appconnect","icon":"ibmcloud.png"}],"oracle":[{"name":"API Platform","ref":"https://www.oracle.com/integration/api-platform/","icon":"oracle.png"},{"name":"Apiary","ref":"https://docs.oracle.com/cloud/apiary/index.html","icon":"oracle.png"}],"alibaba":[{"name":"API Gateway","ref":"https://www.alibabacloud.com/product/api-gateway","icon":"API.png"}],"huawei":[{"name":"API Gateway","ref":"https://www.huaweicloud.com/intl/en-us/product/apig.html","icon":"apig.png"}]},{"category":"Application Services","subcategory":"Media Transcoders","aws":[{"name":"AWS Elemental MediaConnect","ref":"https://aws.amazon.com/mediaconnect/","icon":"Arch_AWS-Elemental-MediaConnect_64.png"},{"name":"AWS Elemental MediaConvert","ref":"https://aws.amazon.com/mediaconvert/","icon":"Arch_AWS-Elemental-MediaConvert_64.png"},{"name":"AWS Elemental MediaLive","ref":"https://aws.amazon.com/medialive/","icon":"Arch_AWS-Elemental-MediaLive_64.png"},{"name":"AWS Elemental MediaPackage","ref":"https://aws.amazon.com/mediapackage/","icon":"Arch_AWS-Elemental-MediaPackage_64.png"},{"name":"AWS Elemental MediaStore","ref":"https://aws.amazon.com/mediastore/","icon":"Arch_AWS-Elemental-MediaStore_64.png"},{"name":"AWS Elemental MediaTailor","ref":"https://aws.amazon.com/MediaTailor/","icon":"Arch_AWS-Elemental-MediaTailor_64.png"},{"name":"Amazon Kinesis Video Streams","ref":"https://aws.amazon.com/kinesis/video-streams/","icon":"Arch_Amazon-Interactive-Video-Service_64.png"},{"name":"AWS Elemental Live","ref":"https://aws.amazon.com/elemental-live/","icon":"Arch_AWS-Elemental-Live_64.png"},{"name":"AWS Elemental Server","ref":"https://aws.amazon.com/elemental-server/","icon":"Arch_AWS-Elemental-Server_64.png"},{"name":"AWS Elemental Conductor","ref":"https://aws.amazon.com/elemental-conductor/","icon":"Arch_AWS-Elemental-Conductor_64.png"},{"name":"AWS Elemental Link","ref":"https://aws.amazon.com/medialive/features/link/","icon":"Arch_AWS-Elemental-Link_64.png"},{"name":"AWS Elemental Delta","ref":"https://aws.amazon.com/elemental-delta/","icon":"Arch_AWS-Elemental-Delta_64.png"}],"azure":[{"name":"Azure Media Services","ref":"https://azure.microsoft.com/services/media-services","icon":"Azure Media Services.png"},{"name":"Live On Demand Streaming","ref":null,"icon":"Azure Media Services.png"},{"name":"Azure Media Player","ref":null,"icon":"Azure Media Services.png"},{"name":"Content Protection","ref":null,"icon":"Azure Media Services.png"},{"name":"Media Analytics","ref":null,"icon":"Azure Media Services.png"}],"google":[{"name":"Transcoder API","ref":"https://cloud.google.com/transcoder","icon":"Google-Cloud-Platform.png"}],"ibm":[{"name":"Digital Transcoding","ref":null,"icon":"ibmcloud.png"}],"oracle":[],"alibaba":[{"name":"ApsaraVideo Live","ref":"https://www.alibabacloud.com/product/apsaravideo-for-live","icon":"video.png"}],"huawei":[{"name":"Media Processing Center","ref":"https://www.huaweicloud.com/en-us/product/mpc.html","icon":"mpc.png"},{"name":"Video on Demand","ref":"https://www.huaweicloud.com/en-us/product/vod.html","icon":"vod.png"},{"name":"Live","ref":"https://www.huaweicloud.com/en-us/product/live.html","icon":"live.png"},{"name":"Convergent Video Cloud Service","ref":"https://www.huaweicloud.com/en-us/product/cvcs.html","icon":"cvcs.png"}]},{"category":"Application Services","subcategory":"Queuing Services","aws":[{"name":"Amazon Simple Queue Service (SQS)","ref":"https://aws.amazon.com/sqs/","icon":"Arch_Amazon-Simple-Queue-Service_64.png"},{"name":"Amazon MQ","ref":"https://aws.amazon.com/amazon-mq/","icon":"Arch_Amazon-MQ_64.png"}],"azure":[{"name":"Azure Web PubSub","ref":"https://azure.microsoft.com/en-us/services/web-pubsub/","icon":"Azure Service Bus Queues.png"},{"name":"Queue Storage","ref":"https://azure.microsoft.com/en-us/services/storage/queues/","icon":"Azure Service Bus Queues.png"},{"name":"Service Bus","ref":"https://azure.microsoft.com/en-us/products/service-bus/","icon":"Azure Service Bus.png"}],"google":[{"name":"Cloud Pub/Sub","ref":"https://cloud.google.com/pubsub","icon":"Cloud-PubSub.png"}],"ibm":[{"name":"Event Steams","ref":"https://cloud.ibm.com/docs/services/EventStreams/index.html#getting_started","icon":"ibmcloud.png"},{"name":"Messages for RabbitMQ","ref":"https://cloud.ibm.com/databases/messages-for-rabbitmq/create","icon":"rabbitmq.svg"}],"oracle":[{"name":"Integration","ref":"https://cloud.oracle.com/integration","icon":"integration.png"},{"name":"Messaging","ref":"https://cloud.oracle.com/messaging","icon":"messaging.png"}],"alibaba":[{"name":"Message Queue","ref":"https://www.alibabacloud.com/product/mq?spm=a3c0i.11270126.209577.68.6c8668dctRiorX","icon":"API.png"}],"huawei":[{"name":"Distributed Message Service","ref":"https://www.huaweicloud.com/intl/en-us/product/dms.html","icon":"dms.png"},{"name":"Distributed Message Service for Kafka","ref":"https://www.huaweicloud.com/intl/en-us/product/dmskafka.html","icon":"DMSforKafka.png"}]},{"category":"Application Services","subcategory":"Mobile Analytics","aws":[{"name":"Amazon Pinpoint","ref":"https://aws.amazon.com/pinpoint/","icon":"aws.png"}],"azure":[{"name":"Mobile Engagement","ref":null,"icon":"Azure Mobile Engagement.png"}],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[{"name":"ServiceStage-MBaaS","ref":"https://www.huaweicloud.com/intl/en-us/product/servicestage.html","icon":"none.png"}]},{"category":"Application Services","subcategory":"Email Services","aws":[{"name":"Amazon SES","ref":"https://aws.amazon.com/ses/","icon":"Application-Services_AmazonSES_email.png"}],"azure":[],"google":[],"ibm":[{"name":"Sendgrid","ref":"https://cloud.ibm.com/docs/infrastructure/email-delivery?topic=email-delivery-getting-started","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Email Delivery","ref":"https://www.oracle.com/cloud/networking/email-delivery.html","icon":"developer.png"}],"alibaba":[{"name":"Direct Mail","ref":"https://www.alibabacloud.com/product/directmail","icon":"directmail.png"}],"huawei":[{"name":"CoreMail","ref":"https://marketplace.huaweicloud.com/intl/product/f4cd8ad7-ecb4-41fe-9706-504315bf5aaa","icon":"none.png"}]},{"category":"Application Services","subcategory":"Notification Services","aws":[{"name":"Amazon SNS","ref":"https://aws.amazon.com/sns/","icon":"Mobile-Services_AmazonSNS.png"}],"azure":[{"name":"Notification Hubs","ref":"https://azure.microsoft.com/en-us/services/notification-hubs/","icon":"Azure Notification Hubs.png"},{"name":"Service Bus","ref":"https://azure.microsoft.com/en-us/products/service-bus/","icon":"Azure Service Bus.png"}],"google":[{"name":"Firebase Cloud Messaging","ref":"https://firebase.google.com/docs/cloud-messaging/","icon":"Google-Cloud-Platform.png"}],"ibm":[{"name":"Event Notifications","ref":"https://cloud.ibm.com/catalog/services/event-notifications","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Infrastructure Notifications","ref":"https://www.oracle.com/devops/notifications/","icon":"oracle.png"}],"alibaba":[{"name":"Short Message Service (SMS)","ref":"https://www.alibabacloud.com/product/short-message-service","icon":"alibaba.png"}],"huawei":[{"name":"Simple Message Notification (SMN)","ref":"https://www.huaweicloud.com/intl/en-us/product/smn.html","icon":"smn.png"},{"name":"Message&SMS (MSGSMS)","ref":"https://www.huaweicloud.com/intl/en-us/product/msgsms.html","icon":"msgsms.png"}]},{"category":"Application Services","subcategory":"Blockchain Services","aws":[{"name":"Amazon Managed Blockchain","ref":"https://aws.amazon.com/managed-blockchain/","icon":"none.png"},{"name":"Amazon Quantum Ledger Database (QLDB)","ref":"https://aws.amazon.com/qldb/","icon":"none.png"}],"azure":[{"name":"Blockchain","ref":"https://azure.microsoft.com/solutions/blockchain/","icon":"Azure subscription.png"},{"name":"Blockchain Workbench","ref":"https://azure.microsoft.com/features/blockchain-workbench/","icon":"Azure subscription.png"},{"name":"Azure Blockchain Tokens","ref":"https://azure.microsoft.com/services/blockchain-tokens/","icon":"none.png"}],"google":[],"ibm":[{"name":"Blockchain Platform","ref":"https://cloud.ibm.com/docs/services/blockchain?topic=blockchain-ibp-console-overview#ibp-console-overview","icon":"ibmcloud.png"},{"name":"Quantum Services","ref":"https://cloud.ibm.com/quantum","icon":"CloudQuantumServices.svg"}],"oracle":[{"name":"Oracle Blockchain","ref":"https://www.oracle.com/blockchain/","icon":"oracle.png"}],"alibaba":[{"name":"Blockchain as a Service","ref":"https://www.alibabacloud.com/products/baas","icon":"alibaba.png"}],"huawei":[{"name":"Blockchain Service","ref":"https://www.huaweicloud.com/intl/en-us/product/bcs.html","icon":"bcs.png"}]},{"category":"Application Services","subcategory":"Chatbot","aws":[{"name":"Amazon Lex","ref":"https://aws.amazon.com/lex/","icon":"Arch_Amazon-Lex_64.png"},{"name":"AWS Chatbot","ref":"https://aws.amazon.com/chatbot/","icon":"Arch_AWS-Chatbot_64.png"},{"name":"Alexa for Business","ref":"https://aws.amazon.com/alexaforbusiness/","icon":"Arch_Alexa-For-Business_64.png"}],"azure":[{"name":"Azure Bot Service","ref":"https://azure.microsoft.com/services/bot-service/","icon":"Azure subscription.png"}],"google":[{"name":"Dialogflow","ref":"https://dialogflow.com/","icon":"none.png"}],"ibm":[{"name":"Watson Assistant","ref":"https://cloud.ibm.com/docs/services/assistant?topic=assistant-getting-started","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Digital Assistant","ref":"https://www.oracle.com/chatbots/","icon":"oracle.png"}],"alibaba":[{"name":"Intelligent Service Robot","ref":"https://www.alibabacloud.com/product/bot","icon":"alibaba.png"}],"huawei":[]},{"category":"Business Productivity","subcategory":"Office Document Solutions","aws":[{"name":"Amazon WorkDocs","ref":"https://aws.amazon.com/workdocs/","icon":"Arch_Amazon-WorkDocs_64.png"},{"name":"Amazon WorkMail","ref":"https://aws.amazon.com/workmail/","icon":"Arch_Amazon-WorkMail_64.png"},{"name":"Amazon WorkLink","ref":"https://aws.amazon.com/worklink/","icon":"Arch_Amazon-WorkLink_64.png"}],"azure":[{"name":"Microsoft Office 365","ref":null,"icon":"Office 365.png"}],"google":[{"name":"Google Workspace","ref":"https://workspace.google.com/","icon":"GSuite.png"}],"ibm":[],"oracle":[],"alibaba":[],"huawei":[{"name":"WPS","ref":"https://marketplace.huaweicloud.com/intl/product/00301-107037-0--0","icon":"none.png"}]},{"category":"Business Productivity","subcategory":"Desktop Application Streaming","aws":[{"name":"Amazon AppStream 2.0","ref":"https://aws.amazon.com/appstream2/","icon":"Arch_Amazon-AppStream_64.png"},{"name":"Amazon WorkSpaces","ref":"https://aws.amazon.com/workspaces/","icon":"Arch_Amazon-WorkSpaces_64.png"},{"name":"NICE DCV","ref":"https://aws.amazon.com/hpc/dcv/","icon":"Arch_NICE-DCV_64.png"}],"azure":[{"name":"Azure Virtual Desktop","ref":"https://azure.microsoft.com/en-us/products/virtual-desktop/","icon":"Windows-Virtual-Desktop.svg"}],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[{"name":"FusionCloud Desktop","ref":"https://carrier.huawei.com/en/products/it/cloud-transformation/fusioncloud-desktop","icon":"none.png"},{"name":"Workspace","ref":null,"icon":"EnterpriseAPPWorkspace.png"}]},{"category":"Business Productivity","subcategory":"Communications Service","aws":[{"name":"Amazon Chime","ref":"https://aws.amazon.com/chime/","icon":"Arch_Amazon-Chime_64.png"},{"name":"Amazon Connect","ref":"https://aws.amazon.com/connect/","icon":"Arch_Amazon-Connect_64.png"}],"azure":[{"name":"Azure Communications Services","ref":"https://azure.microsoft.com/services/communication-services/","icon":"none.png"}],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[{"name":"Workspace","ref":null,"icon":"EnterpriseAPPWorkspace.png"}]},{"category":"Software MarketPlace","subcategory":"Cloud Marketplace","aws":[{"name":"AWS Marketplace","ref":"https://aws.amazon.com/marketplace","icon":"aws.png"}],"azure":[{"name":"Azure MarketPlace","ref":"https://azuremarketplace.microsoft.com/marketplace/apps","icon":"Azure Store_Marketplace.png"}],"google":[{"name":"MarketPlace","ref":"https://cloud.google.com/marketplace","icon":"Google-Cloud-Platform.png"}],"ibm":[{"name":"IBM Cloud Partner Center","ref":"https://cloud.ibm.com/partner-center","icon":"ibmcloud.png"}],"oracle":[{"name":"Oracle Cloud Market Place","ref":"https://cloudmarketplace.oracle.com/","icon":"oracle.png"}],"alibaba":[{"name":"Alibaba Cloud Marketplace","ref":"https://www.alibabacloud.com/marketplace","icon":"alibaba.png"}],"huawei":[{"name":"Huawei Cloud Marketplace","ref":"https://marketplace.huaweicloud.com/intl/","icon":"none.png"}]},{"category":"Internet of Things","subcategory":"IoT Platform","aws":[{"name":"AWS IoT Platform","ref":"https://aws.amazon.com/iot/","icon":"Internet-Of-Things_AWSIoT.png"}],"azure":[{"name":"Azure IoT Platform","ref":"https://azure.microsoft.com/overview/iot/","icon":"Azure IoT Hub.png"},{"name":"Azure IoT Hub","ref":"https://azure.microsoft.com/services/iot-hub/","icon":"Azure IoT Hub.png"}],"google":[{"name":"Cloud IoT Core (Beta)","ref":"https://cloud.google.com/iot-core/","icon":"Google-Cloud-Platform.png"},{"name":"Google Cloud IoT","ref":"https://cloud.google.com/solutions/iot/","icon":"Google-Cloud-Platform.png"}],"ibm":[{"name":"Internet of Things Platform","ref":"https://cloud.ibm.com/docs/services/IoT/getting-started.html","icon":"ibmcloud.png"},{"name":"Node-Red","ref":"https://cloud.ibm.com/developer/appservice/create-app?starterKit=59c9d5bd-4d31-3611-897a-f94eea80dc9f&defaultLanguage=undefined","icon":"ibmcloud.png"}],"oracle":[{"name":"Internet of Things Cloud Service","ref":"https://cloud.oracle.com/en_US/iot","icon":"InternetOfThings.png"}],"alibaba":[{"name":"IoT Platform","ref":"https://www.alibabacloud.com/product/iot","icon":"iot.png"}],"huawei":[{"name":"HUAWEI CLOUD IoT","ref":"https://www.huaweicloud.com/product/iot.html","icon":"IoT.png"},{"name":"HUAWEI CLOUD IoT Device Access","ref":"https://www.huaweicloud.com/product/iothub.html","icon":"IoTDeviceAccess.png"},{"name":"HUAWEI CLOUD IoT Edge","ref":"https://www.huaweicloud.com/product/iotedge.html","icon":"IoTEdge.png"},{"name":"HUAWEI CLOUD IoT Global SIM Link","ref":"https://www.huaweicloud.com/product/globalsimlink.html","icon":"none.png"}]},{"category":"Internet of Things","subcategory":"IoT Development Solutions","aws":[{"name":"AWS Greengrass","ref":"https://aws.amazon.com/greengrass/","icon":"aws.png"}],"azure":[{"name":"Azure IoT SDK","ref":null,"icon":"Azure SDK.png"},{"name":"Azure IoT Edge","ref":"https://azure.microsoft.com/blog/microsoft-launches-azure-iot-technical-training-developers-can-start-quickly-with-iot/","icon":"Azure SDK.png"}],"google":[],"ibm":[{"name":"Internet of Things Platform","ref":"https://cloud.ibm.com/docs/services/IoT/getting-started.html","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[],"huawei":[{"name":"HUAWEI Cloud IoT Edge","ref":"https://www.huaweicloud.com/product/iotedge.html","icon":"IoTEdge.png"},{"name":"HUAWEI Cloud IoT LiteOS","ref":"https://www.huaweicloud.com/product/liteos.html","icon":"none.png"},{"name":"HUAWEI Cloud IoT Stage","ref":"https://www.huaweicloud.com/product/iotstage.html","icon":"IoTStage.png"}]},{"category":"Internet of Things","subcategory":"IoT Analysis","aws":[],"azure":[],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[{"name":"HUAWEI Cloud IoT Analysis","ref":"https://www.huaweicloud.com/product/iotanalytics-platform.html","icon":"IoTanalytics.png"}]},{"category":"Internet of Things","subcategory":"IoT Hardware","aws":[{"name":"AWS IoT Button","ref":"https://aws.amazon.com/iotbutton/","icon":"aws.png"}],"azure":[{"name":"Azure Sphere","ref":"https://azure.microsoft.com/services/azure-sphere/","icon":"Azure IoT Hub.png"}],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Game Development","subcategory":"Game Development","aws":[{"name":"Amazon Lumberyard","ref":null,"icon":"Game-Development_AmazonGameLift.png"}],"azure":[{"name":"Visual Studio","ref":null,"icon":"Visual Studio Team Services.png"}],"google":[],"ibm":[{"name":"Watson Unity SDK","ref":"https://developer.ibm.com/open/projects/watson-developer-cloud-unity-sdk/","icon":"ibmcloud.png"}],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Robotics Development","subcategory":"Robotics Development","aws":[{"name":"AWS RoboMaker","ref":"https://aws.amazon.com/robomaker/","icon":"none.png"}],"azure":[],"google":[],"ibm":[],"oracle":[],"alibaba":[],"huawei":[]},{"category":"Development & Testing","subcategory":"Development & Testing","aws":[{"name":"AWS Dev/Test","ref":null,"icon":"aws.png"}],"azure":[{"name":"Azure Dev/Test","ref":"https://azure.microsoft.com/services/devtest-lab/","icon":"Azure DevTest Labs.png"}],"google":[],"ibm":[],"oracle":[{"name":"Oracle Visual Builder Studio","ref":"https://www.oracle.com/application-development/visual-builder-studio/","icon":"oracle.png"}],"alibaba":[],"huawei":[]}];
+
+  var PROVIDERS = [
+    { key:"aws",     label:"AWS",             color:"var(--aws)",     logo:"assets/img/logo/aws.svg" },
+    { key:"azure",   label:"Azure",           color:"var(--azure)",   logo:"assets/img/logo/msazure.svg" },
+    { key:"google",  label:"Google Cloud",    color:"var(--google)",  logo:"assets/img/logo/google.svg" },
+    { key:"ibm",     label:"IBM Cloud",       color:"var(--ibm)",     logo:"assets/img/logo/IBM-Cloud-svg-lockup-color8.svg" },
+    { key:"oracle",  label:"Oracle Cloud",    color:"var(--oracle)",  logo:"assets/img/logo/oracle.png" },
+    { key:"alibaba", label:"Alibaba Cloud",   color:"var(--alibaba)", logo:"assets/img/logo/alibaba.png" },
+    { key:"huawei",  label:"Huawei Cloud",    color:"var(--huawei)",  logo:"assets/img/logo/huawei.png" }
+  ];
+
+  var activeProviders = {};
+  PROVIDERS.forEach(function(p){ activeProviders[p.key] = true; });
+  var query = "";
+  var selectedServiceGroups = {};
+
+  var elMatrix = document.getElementById("matrix");
+  var elStats = document.getElementById("stats");
+  var elFilters = document.getElementById("providerFilters");
+  var elNoResults = document.getElementById("noResults");
+  var elSearch = document.getElementById("search");
+  var elHeader = document.getElementById("siteHeader");
+  var elThemeToggle = document.getElementById("themeToggle");
+  var elServiceGroupButton = null;
+  var elServiceGroupMenu = null;
+
+  function setTheme(theme){
+    var isNight = theme === "night";
+    document.documentElement.dataset.theme = isNight ? "night" : "day";
+    elThemeToggle.setAttribute("aria-pressed", String(isNight));
+    elThemeToggle.querySelector(".theme-toggle-icon").textContent = isNight ? "☀" : "☾";
+    elThemeToggle.querySelector(".theme-toggle-label").textContent = isNight ? "Day" : "Night";
+    try { localStorage.setItem("cloud-atlas-theme", isNight ? "night" : "day"); } catch(e) {}
+  }
+
+  var savedTheme = "day";
+  try { savedTheme = localStorage.getItem("cloud-atlas-theme") || "day"; } catch(e) {}
+  setTheme(savedTheme);
+  elThemeToggle.addEventListener("click", function(){
+    setTheme(document.documentElement.dataset.theme === "night" ? "day" : "night");
+  });
+
+  function iconPath(provider, icon){
+    return "assets/img/cloudproviders/" + provider + "/" + encodeURIComponent(icon);
+  }
+
+  function matchesQuery(row, q){
+    if(!q) return true;
+    q = q.toLowerCase().trim();
+    if(row.category.toLowerCase().indexOf(q) !== -1) return true;
+    if(row.subcategory.toLowerCase().indexOf(q) !== -1) return true;
+    for(var i=0;i<PROVIDERS.length;i++){
+      var list = row[PROVIDERS[i].key] || [];
+      for(var j=0;j<list.length;j++){
+        if(list[j].name.toLowerCase().indexOf(q) !== -1) return true;
+      }
+    }
+    return false;
+  }
+
+  function buildFilters(){
+    PROVIDERS.forEach(function(p){
+      var btn = document.createElement("button");
+      btn.className = "provider-chip";
+      btn.type = "button";
+      btn.setAttribute("aria-pressed", "true");
+      btn.style.setProperty("--chip-color", p.color);
+      btn.dataset.provider = p.key;
+      var img = document.createElement("img");
+      img.src = p.logo; img.alt = "";
+      btn.appendChild(img);
+      var span = document.createElement("span");
+      span.textContent = p.label;
+      btn.appendChild(span);
+      btn.addEventListener("click", function(){
+        activeProviders[p.key] = !activeProviders[p.key];
+        btn.setAttribute("aria-pressed", String(activeProviders[p.key]));
+        render();
+      });
+      elFilters.appendChild(btn);
+    });
+    var reset = document.createElement("button");
+    reset.className = "filter-reset";
+    reset.type = "button";
+    reset.textContent = "reset filters";
+    reset.addEventListener("click", function(){
+      PROVIDERS.forEach(function(p){ activeProviders[p.key] = true; });
+      selectedServiceGroups = {};
+      elSearch.value = "";
+      query = "";
+      Array.prototype.forEach.call(elFilters.querySelectorAll(".provider-chip"), function(b){
+        b.setAttribute("aria-pressed","true");
+      });
+      render();
+    });
+    elFilters.appendChild(reset);
+
+    var serviceWrap = document.createElement("div");
+    serviceWrap.className = "service-group-wrap";
+
+    var serviceLabel = document.createElement("span");
+    serviceLabel.className = "service-group-label";
+    serviceLabel.textContent = "Service group";
+    serviceWrap.appendChild(serviceLabel);
+
+    var serviceSelectWrap = document.createElement("div");
+    serviceSelectWrap.className = "service-group-select-wrap";
+
+    var serviceButton = document.createElement("button");
+    serviceButton.type = "button";
+    serviceButton.className = "service-group-select";
+    serviceButton.setAttribute("aria-haspopup", "listbox");
+    serviceButton.setAttribute("aria-expanded", "false");
+    serviceButton.textContent = "All service groups";
+    serviceButton.addEventListener("click", function(){
+      var isOpen = serviceSelectWrap.classList.toggle("is-open");
+      serviceButton.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    var serviceMenu = document.createElement("div");
+    serviceMenu.className = "service-group-menu";
+    serviceMenu.setAttribute("role", "listbox");
+    serviceMenu.setAttribute("aria-multiselectable", "true");
+
+    var serviceMenuHeader = document.createElement("div");
+    serviceMenuHeader.className = "service-group-menu-header";
+    var serviceMenuTitle = document.createElement("span");
+    serviceMenuTitle.className = "service-group-menu-title";
+    serviceMenuTitle.textContent = "Select one or more";
+    serviceMenuHeader.appendChild(serviceMenuTitle);
+
+    var serviceClear = document.createElement("button");
+    serviceClear.type = "button";
+    serviceClear.className = "service-group-clear";
+    serviceClear.textContent = "Clear selection";
+    serviceClear.addEventListener("click", function(){
+      selectedServiceGroups = {};
+      render();
+    });
+    serviceMenuHeader.appendChild(serviceClear);
+    serviceMenu.appendChild(serviceMenuHeader);
+
+    serviceSelectWrap.appendChild(serviceButton);
+    serviceSelectWrap.appendChild(serviceMenu);
+    serviceWrap.appendChild(serviceSelectWrap);
+    elFilters.appendChild(serviceWrap);
+
+    elServiceGroupButton = serviceButton;
+    elServiceGroupMenu = serviceMenu;
+  }
+
+  function slug(s){
+    return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+  }
+
+  function chipNode(provider, entry){
+    var color = "var(--" + provider + ")";
+    var el;
+    if(entry.ref){
+      el = document.createElement("a");
+      el.href = entry.ref;
+      el.target = "_blank";
+      el.rel = "noopener";
+      el.className = "chip is-link";
+    } else {
+      el = document.createElement("span");
+      el.className = "chip is-plain";
+    }
+    el.style.setProperty("--chip-color", color);
+    var img = document.createElement("img");
+    img.loading = "lazy";
+    img.src = iconPath(provider, entry.icon);
+    img.alt = "";
+    img.onerror = function(){ this.style.visibility = "hidden"; };
+    el.appendChild(img);
+    var name = document.createElement("span");
+    name.className = "chip-name";
+    name.textContent = entry.name;
+    el.appendChild(name);
+    return el;
+  }
+
+  function providerCell(provider, entries){
+    var cell = document.createElement("div");
+    cell.className = "cell provider";
+    cell.dataset.cellProvider = provider;
+
+    var mobileLabel = document.createElement("div");
+    mobileLabel.className = "cell-label-mobile";
+    mobileLabel.style.setProperty("--chip-color", "var(--" + provider + ")");
+    var meta = PROVIDERS.filter(function(p){ return p.key === provider; })[0];
+    var limg = document.createElement("img");
+    limg.src = meta.logo; limg.alt = "";
+    mobileLabel.appendChild(limg);
+    var ltext = document.createElement("span");
+    ltext.textContent = meta.label;
+    mobileLabel.appendChild(ltext);
+    cell.appendChild(mobileLabel);
+
+    if(!entries || entries.length === 0){
+      cell.classList.add("is-empty");
+      var empty = document.createElement("span");
+      empty.className = "cell-empty";
+      empty.textContent = "—";
+      cell.appendChild(empty);
+      return cell;
+    }
+    var ul = document.createElement("ul");
+    ul.className = "chip-list";
+    entries.forEach(function(e){
+      var li = document.createElement("li");
+      li.appendChild(chipNode(provider, e));
+      ul.appendChild(li);
+    });
+    cell.appendChild(ul);
+    return cell;
+  }
+
+  function headRow(){
+    var head = document.createElement("div");
+    head.className = "head-row";
+    var visibleProviderCount = PROVIDERS.filter(function(p){ return activeProviders[p.key]; }).length;
+    var providerLabelSize = Math.min(18, Math.max(11.5, 11.5 + (7 - visibleProviderCount) * 1.5));
+    var labelCell = document.createElement("div");
+    labelCell.className = "cell label";
+    labelCell.textContent = "Service group";
+    head.appendChild(labelCell);
+    PROVIDERS.forEach(function(p){
+      var c = document.createElement("div");
+      c.className = "cell provider-header";
+      c.dataset.cellProvider = p.key;
+      c.style.setProperty("--provider-label-size", providerLabelSize + "px");
+      if(!activeProviders[p.key]) c.style.display = "none";
+      var img = document.createElement("img");
+      img.src = p.logo; img.alt = "";
+      c.appendChild(img);
+      var span = document.createElement("span");
+      span.textContent = p.label;
+      c.appendChild(span);
+      head.appendChild(c);
+    });
+    return head;
+  }
+
+  function render(){
+    var q = query.trim();
+    var byCategory = [];
+    var order = [];
+    var index = {};
+
+    DATA.forEach(function(row){
+      if(!matchesQuery(row, q)) return;
+      if(!(row.category in index)){
+        index[row.category] = [];
+        order.push(row.category);
+      }
+      index[row.category].push(row);
+    });
+
+    order = order.sort(function(a, b){ return a.localeCompare(b); });
+    var allServiceGroups = [];
+    DATA.forEach(function(row){
+      if(allServiceGroups.indexOf(row.category) === -1) allServiceGroups.push(row.category);
+    });
+    allServiceGroups.sort(function(a, b){ return a.localeCompare(b); });
+    order.forEach(function(cat){
+      index[cat].sort(function(a, b){
+        return (a.subcategory || "").localeCompare(b.subcategory || "");
+      });
+    });
+
+    if(elServiceGroupMenu){
+      var menuHeader = elServiceGroupMenu.querySelector(".service-group-menu-header");
+      elServiceGroupMenu.innerHTML = "";
+      elServiceGroupMenu.appendChild(menuHeader);
+      allServiceGroups.forEach(function(cat){
+        var label = document.createElement("label");
+        label.className = "service-group-option";
+
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = cat;
+        checkbox.checked = Boolean(selectedServiceGroups[cat]);
+        checkbox.addEventListener("change", function(){
+          if(this.checked){
+            selectedServiceGroups[cat] = true;
+          } else {
+            delete selectedServiceGroups[cat];
+          }
+          render();
+        });
+
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(cat));
+        elServiceGroupMenu.appendChild(label);
+      });
+
+      var selectedLabels = allServiceGroups.filter(function(cat){ return selectedServiceGroups[cat]; });
+      elServiceGroupButton.textContent = selectedLabels.length === 0 ? "All service groups" : selectedLabels.join(", ");
+    }
+
+    elMatrix.innerHTML = "";
+
+    var visibleProviders = PROVIDERS.filter(function(p){ return activeProviders[p.key]; });
+    var groupCount = 0, serviceCount = 0;
+
+    order.forEach(function(cat, i){
+      if(Object.keys(selectedServiceGroups).length > 0 && !selectedServiceGroups[cat]) return;
+      groupCount += index[cat].length;
+
+      var block = document.createElement("section");
+      block.className = "category-block";
+      block.id = "cat-" + slug(cat);
+
+      var heading = document.createElement("div");
+      heading.className = "category-heading";
+      var hIdx = document.createElement("span");
+      hIdx.className = "category-idx";
+      hIdx.textContent = String(i+1).padStart(2,"0");
+      heading.appendChild(hIdx);
+      var hName = document.createElement("h2");
+      hName.className = "category-name";
+      hName.style.margin = "0";
+      hName.textContent = cat;
+      heading.appendChild(hName);
+      block.appendChild(heading);
+
+      block.appendChild(headRow());
+
+      index[cat].forEach(function(row){
+        var r = document.createElement("div");
+        r.className = "row";
+        var labelCell = document.createElement("div");
+        labelCell.className = "cell label";
+        labelCell.textContent = row.subcategory;
+        r.appendChild(labelCell);
+
+        PROVIDERS.forEach(function(p){
+          var entries = row[p.key] || [];
+          serviceCount += entries.length;
+          var cell = providerCell(p.key, entries);
+          if(!activeProviders[p.key]) cell.style.display = "none";
+          r.appendChild(cell);
+        });
+
+        block.appendChild(r);
+      });
+
+      elMatrix.appendChild(block);
+    });
+
+    var template = "190px repeat(" + Math.max(visibleProviders.length, 1) + ", 1fr)";
+    document.querySelectorAll(".row, .head-row").forEach(function(rowEl){
+      rowEl.style.gridTemplateColumns = template;
+    });
+
+    elNoResults.style.display = groupCount === 0 ? "block" : "none";
+
+    elStats.innerHTML = "";
+    var statParts = [
+      groupCount + " service group" + (groupCount === 1 ? "" : "s"),
+      order.length + " categor" + (order.length === 1 ? "y" : "ies"),
+      visibleProviders.length + " of " + PROVIDERS.length + " providers shown"
+    ];
+    statParts.forEach(function(t, i){
+      var s = document.createElement("span");
+      if(i === 0){
+        var strong = document.createElement("strong");
+        strong.textContent = t;
+        s.appendChild(strong);
+      } else {
+        s.textContent = t;
+      }
+      elStats.appendChild(s);
+    });
+  }
+
+  var searchTimer = null;
+  elSearch.addEventListener("input", function(){
+    clearTimeout(searchTimer);
+    var v = elSearch.value;
+    searchTimer = setTimeout(function(){
+      query = v;
+      render();
+    }, 120);
+  });
+
+  window.addEventListener("scroll", function(){
+    elHeader.classList.toggle("is-condensed", window.scrollY > 8);
+  }, { passive:true });
+
+  buildFilters();
+  render();
+})();
+</script>
+</body>
+</html>
